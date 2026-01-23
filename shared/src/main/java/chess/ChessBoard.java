@@ -65,5 +65,75 @@ public class ChessBoard {
      */
     public void resetBoard() {
         board = new ChessPiece[8][8];
+
+        // Add pieces to the starting positions
+
+        // White pieces
+        // Pawns
+        for (int i = 1; i < 9; i++) {
+            ChessPosition position = new ChessPosition(2, i);
+            ChessPiece piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+            addPiece(position, piece);
+        }
+        // Rooks
+        ChessPiece piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        ChessPosition position = new ChessPosition(1,1);
+        addPiece(position, piece);
+        position = new ChessPosition(1, 8);
+        addPiece(position, piece);
+        // Knights
+        piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        position = new ChessPosition(1,2);
+        addPiece(position, piece);
+        position = new ChessPosition(1, 7);
+        addPiece(position, piece);
+        // Bishops
+        piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        position = new ChessPosition(1,3);
+        addPiece(position, piece);
+        position = new ChessPosition(1, 6);
+        addPiece(position, piece);
+        // Queen
+        piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+        position = new ChessPosition(1,4);
+        addPiece(position, piece);
+        // King
+        piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+        position = new ChessPosition(1,5);
+        addPiece(position, piece);
+
+        // Black pieces
+        // Pawns
+        for (int i = 1; i < 9; i++) {
+            position = new ChessPosition(7, i);
+            piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+            addPiece(position, piece);
+        }
+        // Rooks
+        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+        position = new ChessPosition(8,1);
+        addPiece(position, piece);
+        position = new ChessPosition(8, 8);
+        addPiece(position, piece);
+        // Knights
+        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+        position = new ChessPosition(8,2);
+        addPiece(position, piece);
+        position = new ChessPosition(8, 7);
+        addPiece(position, piece);
+        // Bishops
+        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+        position = new ChessPosition(8,3);
+        addPiece(position, piece);
+        position = new ChessPosition(8, 6);
+        addPiece(position, piece);
+        // Queen
+        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+        position = new ChessPosition(8,4);
+        addPiece(position, piece);
+        // King
+        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+        position = new ChessPosition(8,5);
+        addPiece(position, piece);
     }
 }
