@@ -38,7 +38,9 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow()][position.getColumn()] = new ChessPiece(piece.getTeamColor(), piece.getPieceType());
+        int rowIndex = position.getRow() - 1;
+        int colIndex = position.getColumn() - 1;
+        board[rowIndex][colIndex] = new ChessPiece(piece.getTeamColor(), piece.getPieceType());
     }
 
     /**
@@ -49,10 +51,12 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        if (Objects.equals(board[position.getRow()][position.getColumn()], null)) {
+        int rowIndex = position.getRow() - 1;
+        int colIndex = position.getColumn() - 1;
+        if (board[rowIndex][colIndex] == null) {
             return null;
         }
-        return board[position.getRow()][position.getColumn()];
+        return board[rowIndex][colIndex];
     }
 
     /**
