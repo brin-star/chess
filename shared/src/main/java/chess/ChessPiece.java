@@ -75,6 +75,10 @@ public class ChessPiece {
             pawnMoves(validMoves, board, myPosition, piece);
             return validMoves;
         }
+        else if (piece.getPieceType() == PieceType.ROOK) {
+            rookMoves(validMoves, board, myPosition, piece);
+            return validMoves;
+        }
         return validMoves;
     }
 
@@ -137,6 +141,126 @@ public class ChessPiece {
         diagonalCol = newCol - 1;
         if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
             capture(moves, board, startPosition, diagonalRow, diagonalCol, piece, ChessGame.TeamColor.WHITE, null);
+        }
+    }
+
+    private void rookMoves(Collection<ChessMove> moves, ChessBoard board, ChessPosition startPosition, ChessPiece piece) {
+        int newRow = startPosition.getRow();
+        int newCol = startPosition.getColumn();
+
+        // Check forward movements
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            int forward = newRow + 1;
+
+            while (true) {
+                ChessPosition destinationPosition = new ChessPosition(forward, newCol);
+
+                if (forward < 1 || forward > 8) {
+                    break;
+                }
+
+                if (board.getPiece(destinationPosition) == null) {
+                    moveforward(moves, board, startPosition, piece, forward, newCol, null);
+                    ++forward;
+                }
+                else {
+                    break;
+                }
+            }
+        }
+
+        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            int forward = newRow - 1;
+            while (true) {
+                ChessPosition destinationPosition = new ChessPosition(forward, newCol);
+
+                if (forward < 1 || forward > 8) {
+                    break;
+                }
+
+                if (board.getPiece(destinationPosition) == null) {
+                    moveforward(moves, board, startPosition, piece, forward, newCol, null);
+                    --forward;
+                }
+                else {
+                    break;
+                }
+            }
+        }
+
+        // Check backward movements
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            int backward = newRow - 1;
+            while (true) {
+                ChessPosition destinationPosition = new ChessPosition(backward, newCol);
+
+                if (backward < 1 || backward > 8) {
+                    break;
+                }
+
+                if (board.getPiece(destinationPosition) == null) {
+                    moveforward(moves, board, startPosition, piece, backward, newCol, null);
+                    --backward;
+                }
+                else {
+                    break;
+                }
+            }
+        }
+
+        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            int backward = newRow + 1;
+            while (true) {
+                ChessPosition destinationPosition = new ChessPosition(backward, newCol);
+
+                if (backward < 1 || backward > 8) {
+                    break;
+                }
+
+                if (board.getPiece(destinationPosition) == null) {
+                    moveforward(moves, board, startPosition, piece, backward, newCol, null);
+                    ++backward;
+                }
+                else {
+                    break;
+                }
+            }
+        }
+
+        // Check right movements
+        int right = newCol + 1;
+        while (true) {
+            ChessPosition destinationPosition = new ChessPosition(right, newCol);
+
+            if (right < 1 || right > 8) {
+                break;
+            }
+
+            if (board.getPiece(destinationPosition) == null) {
+                moveforward(moves, board, startPosition, piece, right, newCol, null);
+                ++right;
+            }
+            else {
+                break;
+            }
+        }
+
+        // Check left movements
+        int left = newCol - 1;
+        while (true) {
+            ChessPosition destinationPosition = new ChessPosition(left, newCol);
+
+            if (left < 1 || left > 8) {
+                break;
+            }
+
+            if (board.getPiece(destinationPosition) == null) {
+                moveforward(moves, board, startPosition, piece, left, newCol, null);
+                --left;
+            }
+            else {
+                break;
+            }
         }
     }
 
