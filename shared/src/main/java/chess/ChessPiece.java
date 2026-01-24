@@ -81,27 +81,103 @@ public class ChessPiece {
     private void pawnMoves(Collection<ChessMove> moves, ChessBoard board, ChessPosition startPosition, ChessPiece piece) {
         ChessPosition currentPosition = startPosition;
 
-        // Determine the correct movement direction
-        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            currentPosition = new ChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn());
+        // Check if this is the first move (move two spaces)
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE && currentPosition.getRow() == 1) {
+            currentPosition = new ChessPosition(currentPosition.getRow() + 2, currentPosition.getColumn());
             ChessMove validMove = new ChessMove(startPosition, currentPosition, null);
             moves.add(validMove);
+        }
+
+        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK && currentPosition.getRow() == 6) {
+            currentPosition = new ChessPosition(currentPosition.getRow() - 2, currentPosition.getColumn());
+            ChessMove validMove = new ChessMove(startPosition, currentPosition, null);
+            moves.add(validMove);
+        }
+
+        // Move one space forward
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            currentPosition = new ChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn());
+            // Check if position is not off the board
+            if (currentPosition.getRow() >= 0 && currentPosition.getRow() <= 7 && currentPosition.getColumn() >= 0 && currentPosition.getColumn() <= 7) {
+                // Check if there is a chess piece in front of the pawn
+                ChessPiece destinationPiece = board.getPiece(currentPosition);
+                if (destinationPiece == null) {
+                    ChessMove validMove = new ChessMove(startPosition, currentPosition, null);
+                    moves.add(validMove);
+                }
+            }
         }
 
         if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
             currentPosition = new ChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn());
-            ChessMove validMove = new ChessMove(startPosition, currentPosition, null);
-            moves.add(validMove);
+            // Check if position is not off the board
+            if (currentPosition.getRow() >= 0 && currentPosition.getRow() <= 7 && currentPosition.getColumn() >= 0 && currentPosition.getColumn() <= 7) {
+                // Check if there is a chess piece in front of the pawn
+                ChessPiece destinationPiece = board.getPiece(currentPosition);
+                if (destinationPiece == null) {
+                    ChessMove validMove = new ChessMove(startPosition, currentPosition, null);
+                    moves.add(validMove);
+                }
+            }
         }
 
-        // Check if position is not off the board
-        if (currentPosition.getRow() < 0 || currentPosition.getRow() > 7 || currentPosition.getColumn() < 0 || currentPosition.getColumn() > 7) {
-            return;
+        // Check if there are any pieces that can be captured diagonally
+        // White pawns
+        ChessPosition diagonalPosition = new ChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn() + 1);
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE && board.getPiece(diagonalPosition) != null) {
+            currentPosition = new ChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn() + 1);
+            // Check if position is not off the board
+            if (currentPosition.getRow() >= 0 && currentPosition.getRow() <= 7 && currentPosition.getColumn() >= 0 && currentPosition.getColumn() <= 7) {
+                // Check if there is a chess piece is the opposing team
+                ChessPiece destinationPiece = board.getPiece(currentPosition);
+                if (destinationPiece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+                    ChessMove validMove = new ChessMove(startPosition, currentPosition, null);
+                    moves.add(validMove);
+                }
+            }
         }
 
-        // Check if there is a chess piece in front of the pawn
-        if (currentPosition != null) {
-            return;
+        diagonalPosition = new ChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn() - 1);
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE && board.getPiece(diagonalPosition) != null) {
+            currentPosition = new ChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn() - 1);
+            // Check if position is not off the board
+            if (currentPosition.getRow() >= 0 && currentPosition.getRow() <= 7 && currentPosition.getColumn() >= 0 && currentPosition.getColumn() <= 7) {
+                // Check if there is a chess piece is the opposing team
+                ChessPiece destinationPiece = board.getPiece(currentPosition);
+                if (destinationPiece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+                    ChessMove validMove = new ChessMove(startPosition, currentPosition, null);
+                    moves.add(validMove);
+                }
+            }
+        }
+
+        // Black pawns
+        diagonalPosition = new ChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn() + 1);
+        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK && board.getPiece(diagonalPosition) != null) {
+            currentPosition = new ChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn() + 1);
+            // Check if position is not off the board
+            if (currentPosition.getRow() >= 0 && currentPosition.getRow() <= 7 && currentPosition.getColumn() >= 0 && currentPosition.getColumn() <= 7) {
+                // Check if there is a chess piece is the opposing team
+                ChessPiece destinationPiece = board.getPiece(currentPosition);
+                if (destinationPiece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                    ChessMove validMove = new ChessMove(startPosition, currentPosition, null);
+                    moves.add(validMove);
+                }
+            }
+        }
+
+        diagonalPosition = new ChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn() - 1);
+        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK && board.getPiece(diagonalPosition) != null) {
+            currentPosition = new ChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn() - 1);
+            // Check if position is not off the board
+            if (currentPosition.getRow() >= 0 && currentPosition.getRow() <= 7 && currentPosition.getColumn() >= 0 && currentPosition.getColumn() <= 7) {
+                // Check if there is a chess piece is the opposing team
+                ChessPiece destinationPiece = board.getPiece(currentPosition);
+                if (destinationPiece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                    ChessMove validMove = new ChessMove(startPosition, currentPosition, null);
+                    moves.add(validMove);
+                }
+            }
         }
 
         // Check if the pawn made it to the other side of the board and promote it
@@ -124,48 +200,6 @@ public class ChessPiece {
             validMove = new ChessMove(startPosition, currentPosition, PieceType.ROOK);
             moves.add(validMove);
             validMove = new ChessMove(startPosition, currentPosition, PieceType.KNIGHT);
-            moves.add(validMove);
-        }
-
-        // Check if there are any pieces that can be captured diagonally
-        ChessPosition diagonalPosition = new ChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn() + 1);
-        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE && board.getPiece(diagonalPosition) != null) {
-            currentPosition = new ChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn() + 1);
-            ChessMove validMove = new ChessMove(startPosition, currentPosition, null);
-            moves.add(validMove);
-        }
-
-        diagonalPosition = new ChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn() - 1);
-        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE && board.getPiece(diagonalPosition) != null) {
-            currentPosition = new ChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn() - 1);
-            ChessMove validMove = new ChessMove(startPosition, currentPosition, null);
-            moves.add(validMove);
-        }
-
-        diagonalPosition = new ChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn() + 1);
-        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK && board.getPiece(diagonalPosition) != null) {
-            currentPosition = new ChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn() + 1);
-            ChessMove validMove = new ChessMove(startPosition, currentPosition, null);
-            moves.add(validMove);
-        }
-
-        diagonalPosition = new ChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn() - 1);
-        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK && board.getPiece(diagonalPosition) != null) {
-            currentPosition = new ChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn() - 1);
-            ChessMove validMove = new ChessMove(startPosition, currentPosition, null);
-            moves.add(validMove);
-        }
-
-        // Check if this is the first move
-        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE && currentPosition.getRow() == 1) {
-            currentPosition = new ChessPosition(currentPosition.getRow() + 2, currentPosition.getColumn());
-            ChessMove validMove = new ChessMove(startPosition, currentPosition, null);
-            moves.add(validMove);
-        }
-
-        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK && currentPosition.getRow() == 6) {
-            currentPosition = new ChessPosition(currentPosition.getRow() - 2, currentPosition.getColumn());
-            ChessMove validMove = new ChessMove(startPosition, currentPosition, null);
             moves.add(validMove);
         }
     }
