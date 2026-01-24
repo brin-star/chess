@@ -148,82 +148,38 @@ public class ChessPiece {
         int newRow = startPosition.getRow();
         int newCol = startPosition.getColumn();
 
-        // Check forward movements
-        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            int forward = newRow + 1;
+        // Check forward and backward movements
+        int forward = newRow + 1;
+        while (true) {
+            ChessPosition destinationPosition = new ChessPosition(forward, newCol);
 
-            while (true) {
-                ChessPosition destinationPosition = new ChessPosition(forward, newCol);
+            if (forward < 1 || forward > 8) {
+                break;
+            }
 
-                if (forward < 1 || forward > 8) {
-                    break;
-                }
-
-                if (board.getPiece(destinationPosition) == null) {
-                    moveforward(moves, board, startPosition, piece, forward, newCol, null);
-                    ++forward;
-                }
-                else {
-                    break;
-                }
+            if (board.getPiece(destinationPosition) == null) {
+                moveforward(moves, board, startPosition, piece, forward, newCol, null);
+                ++forward;
+            }
+            else {
+                break;
             }
         }
 
-        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
-            int forward = newRow - 1;
-            while (true) {
-                ChessPosition destinationPosition = new ChessPosition(forward, newCol);
+        forward = newRow - 1;
+        while (true) {
+            ChessPosition destinationPosition = new ChessPosition(forward, newCol);
 
-                if (forward < 1 || forward > 8) {
-                    break;
-                }
-
-                if (board.getPiece(destinationPosition) == null) {
-                    moveforward(moves, board, startPosition, piece, forward, newCol, null);
-                    --forward;
-                }
-                else {
-                    break;
-                }
+            if (forward < 1 || forward > 8) {
+                break;
             }
-        }
 
-        // Check backward movements
-        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            int backward = newRow - 1;
-            while (true) {
-                ChessPosition destinationPosition = new ChessPosition(backward, newCol);
-
-                if (backward < 1 || backward > 8) {
-                    break;
-                }
-
-                if (board.getPiece(destinationPosition) == null) {
-                    moveforward(moves, board, startPosition, piece, backward, newCol, null);
-                    --backward;
-                }
-                else {
-                    break;
-                }
+            if (board.getPiece(destinationPosition) == null) {
+                moveforward(moves, board, startPosition, piece, forward, newCol, null);
+                --forward;
             }
-        }
-
-        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
-            int backward = newRow + 1;
-            while (true) {
-                ChessPosition destinationPosition = new ChessPosition(backward, newCol);
-
-                if (backward < 1 || backward > 8) {
-                    break;
-                }
-
-                if (board.getPiece(destinationPosition) == null) {
-                    moveforward(moves, board, startPosition, piece, backward, newCol, null);
-                    ++backward;
-                }
-                else {
-                    break;
-                }
+            else {
+                break;
             }
         }
 
