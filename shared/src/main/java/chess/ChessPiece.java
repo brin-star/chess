@@ -83,6 +83,11 @@ public class ChessPiece {
             bishopMoves(validMoves, board, myPosition, piece);
             return validMoves;
         }
+        else if (piece.getPieceType() == PieceType.QUEEN) {
+            bishopMoves(validMoves, board, myPosition, piece);
+            rookMoves(validMoves, board, myPosition, piece);
+            return validMoves;
+        }
         return validMoves;
     }
 
@@ -383,7 +388,7 @@ public class ChessPiece {
             ChessPosition destinationPosition = new ChessPosition(newRow, newCol);
             ChessPiece destinationPiece = board.getPiece(destinationPosition);
             if (destinationPiece != null && destinationPiece.getTeamColor() == enemyColor) {
-                if (piece.getTeamColor() == ChessGame.TeamColor.WHITE && newRow == 8) {
+                if (piece.getPieceType() == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.WHITE && newRow == 8) {
                     ChessMove validMove = new ChessMove(startPosition, destinationPosition, PieceType.QUEEN);
                     moves.add(validMove);
                     validMove = new ChessMove(startPosition, destinationPosition, PieceType.BISHOP);
@@ -394,7 +399,7 @@ public class ChessPiece {
                     moves.add(validMove);
                     return;
                 }
-                else if (piece.getTeamColor() == ChessGame.TeamColor.BLACK && newRow == 1) {
+                else if (piece.getPieceType() == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.BLACK && newRow == 1) {
                     ChessMove validMove = new ChessMove(startPosition, destinationPosition, PieceType.QUEEN);
                     moves.add(validMove);
                     validMove = new ChessMove(startPosition, destinationPosition, PieceType.BISHOP);
