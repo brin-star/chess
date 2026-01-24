@@ -88,6 +88,10 @@ public class ChessPiece {
             rookMoves(validMoves, board, myPosition, piece);
             return validMoves;
         }
+        else if (piece.getPieceType() == PieceType.KING) {
+            kingMoves(validMoves, board, myPosition, piece);
+            return validMoves;
+        }
         return validMoves;
     }
 
@@ -346,6 +350,104 @@ public class ChessPiece {
         }
     }
 
+    private void kingMoves(Collection<ChessMove> moves, ChessBoard board, ChessPosition startPosition, ChessPiece piece) {
+        int newRow = startPosition.getRow();
+        int newCol = startPosition.getColumn();
+
+        // Check forward and backward movements
+        int forward = newRow + 1;
+
+        if (forward >= 1 && forward <= 8 && newCol >= 1 && newCol <= 8) {
+            ChessPosition destinationPosition = new ChessPosition(forward, newCol);
+
+            if (board.getPiece(destinationPosition) == null) {
+                moveforward(moves, board, startPosition, piece, forward, newCol, null);
+            } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
+                capture(moves, board, startPosition, forward, newCol, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+            }
+        }
+
+        int backward = newRow - 1;
+        if (backward >= 1 && backward <= 8 && newCol >= 1 && newCol <= 8) {
+            ChessPosition destinationPosition = new ChessPosition(backward, newCol);
+
+            if (board.getPiece(destinationPosition) == null) {
+                moveforward(moves, board, startPosition, piece, backward, newCol, null);
+            } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
+                capture(moves, board, startPosition, backward, newCol, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+            }
+        }
+
+        // Check right movements
+        int right = newCol + 1;
+        if (newRow >= 1 && newRow <= 8 && right >= 1 && right <= 8) {
+            ChessPosition destinationPosition = new ChessPosition(newRow, right);
+
+            if (board.getPiece(destinationPosition) == null) {
+                moveforward(moves, board, startPosition, piece, newRow, right, null);
+            } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
+                capture(moves, board, startPosition, newRow, right, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+            }
+        }
+
+        // Check left movements
+        int left = newCol - 1;
+        if (newRow >= 1 && newRow <= 8 && left >= 1 && left <= 8) {
+            ChessPosition destinationPosition = new ChessPosition(newRow, left);
+
+            if (board.getPiece(destinationPosition) == null) {
+                moveforward(moves, board, startPosition, piece, newRow, left, null);
+            } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
+                capture(moves, board, startPosition, newRow, left, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+            }
+        }
+
+        // Check top right corner diagonal
+        if (forward >= 1 && forward <= 8 && right >= 1 && right <= 8) {
+            ChessPosition destinationPosition = new ChessPosition(forward, right);
+
+            if (board.getPiece(destinationPosition) == null) {
+                moveforward(moves, board, startPosition, piece, forward, right, null);
+            } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
+                capture(moves, board, startPosition, forward, right, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+            }
+        }
+
+
+        // Check top left corner diagonal
+        if (forward >= 1 && forward <= 8 && left >= 1 && left <= 8) {
+            ChessPosition destinationPosition = new ChessPosition(forward, left);
+
+            if (board.getPiece(destinationPosition) == null) {
+                moveforward(moves, board, startPosition, piece, forward, left, null);
+            } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
+                capture(moves, board, startPosition, forward, left, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+            }
+        }
+
+        // Check bottom right movements
+        if (backward >= 1 && backward <= 8 && right >= 1 && right <= 8) {
+            ChessPosition destinationPosition = new ChessPosition(backward, right);
+
+            if (board.getPiece(destinationPosition) == null) {
+                moveforward(moves, board, startPosition, piece, backward, right, null);
+            } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
+                capture(moves, board, startPosition, backward, right, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+            }
+        }
+
+        // Check bottom left movements
+        if (backward >= 1 && backward <= 8 && left >= 1 && left <= 8) {
+            ChessPosition destinationPosition = new ChessPosition(backward, left);
+
+            if (board.getPiece(destinationPosition) == null) {
+                moveforward(moves, board, startPosition, piece, backward, left, null);
+            } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
+                capture(moves, board, startPosition, backward, left, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+            }
+        }
+    }
+
     private void moveforward(Collection<ChessMove> moves, ChessBoard board, ChessPosition startPosition, ChessPiece piece, int newRow, int newCol, ChessPiece.PieceType promotion) {
         // Check if position is not off the board
         if (newRow >= 1 && newRow <= 8 && newCol >= 1 && newCol <= 8) {
@@ -353,7 +455,7 @@ public class ChessPiece {
             ChessPosition destinationPosition = new ChessPosition(newRow, newCol);
             ChessPiece destinationPiece = board.getPiece(destinationPosition);
             // Check if it can be promoted
-            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE && newRow == 8 && destinationPiece == null) {
+            if (piece.getPieceType() == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.WHITE && newRow == 8 && destinationPiece == null) {
                 ChessMove validMove = new ChessMove(startPosition, destinationPosition, PieceType.QUEEN);
                 moves.add(validMove);
                 validMove = new ChessMove(startPosition, destinationPosition, PieceType.BISHOP);
@@ -363,7 +465,7 @@ public class ChessPiece {
                 validMove = new ChessMove(startPosition, destinationPosition, PieceType.KNIGHT);
                 moves.add(validMove);
             }
-            else if (piece.getTeamColor() == ChessGame.TeamColor.BLACK && newRow == 1 && destinationPiece == null) {
+            else if (piece.getPieceType() == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.BLACK && newRow == 1 && destinationPiece == null) {
                 ChessMove validMove = new ChessMove(startPosition, destinationPosition, PieceType.QUEEN);
                 moves.add(validMove);
                 validMove = new ChessMove(startPosition, destinationPosition, PieceType.BISHOP);
