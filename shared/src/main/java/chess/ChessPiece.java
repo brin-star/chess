@@ -79,6 +79,10 @@ public class ChessPiece {
             rookMoves(validMoves, board, myPosition, piece);
             return validMoves;
         }
+        else if (piece.getPieceType() == PieceType.BISHOP) {
+            bishopMoves(validMoves, board, myPosition, piece);
+            return validMoves;
+        }
         return validMoves;
     }
 
@@ -228,6 +232,107 @@ public class ChessPiece {
             }
             else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
                 capture(moves, board, startPosition, newRow, left, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+                break;
+            }
+            else {
+                break;
+            }
+        }
+    }
+
+    private void bishopMoves(Collection<ChessMove> moves, ChessBoard board, ChessPosition startPosition, ChessPiece piece) {
+        int newRow = startPosition.getRow();
+        int newCol = startPosition.getColumn();
+
+        // Check top right corner diagonal
+        int forward = newRow + 1;
+        int right = newCol + 1;
+        while (true) {
+            ChessPosition destinationPosition = new ChessPosition(forward, right);
+
+            if (forward < 1 || forward > 8 || right < 1 || right > 8) {
+                break;
+            }
+
+            if (board.getPiece(destinationPosition) == null) {
+                moves.add(new ChessMove(startPosition, destinationPosition, null));
+                ++forward;
+                ++right;
+            }
+            else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
+                capture(moves, board, startPosition, forward, right, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+                break;
+            }
+            else {
+                break;
+            }
+        }
+
+        // Check top left corner diagonal
+        forward = newRow + 1;
+        int left = newCol - 1;
+        while (true) {
+            ChessPosition destinationPosition = new ChessPosition(forward, left);
+
+            if (forward < 1 || forward > 8 || left < 1 || left > 8) {
+                break;
+            }
+
+            if (board.getPiece(destinationPosition) == null) {
+                moves.add(new ChessMove(startPosition, destinationPosition, null));
+                ++forward;
+                --left;
+            }
+            else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
+                capture(moves, board, startPosition, forward, left, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+                break;
+            }
+            else {
+                break;
+            }
+        }
+
+        // Check bottom right movements
+        int backward = newRow - 1;
+        right = newCol + 1;
+        while (true) {
+            ChessPosition destinationPosition = new ChessPosition(backward, right);
+
+            if (backward < 1 || backward > 8 || right < 1 || right > 8) {
+                break;
+            }
+
+            if (board.getPiece(destinationPosition) == null) {
+                moves.add(new ChessMove(startPosition, destinationPosition, null));
+                --backward;
+                ++right;
+            }
+            else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
+                capture(moves, board, startPosition, backward, right, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+                break;
+            }
+            else {
+                break;
+            }
+        }
+
+        // Check bottom left movements
+        backward = newRow - 1;
+        left = newCol - 1;
+        while (true) {
+            ChessPosition destinationPosition = new ChessPosition(backward, left);
+
+            if (backward < 1 || backward > 8 || left < 1 || left > 8) {
+                break;
+            }
+
+            if (board.getPiece(destinationPosition) == null) {
+                moves.add(new ChessMove(startPosition, destinationPosition, null));
+                --backward;
+                --left;
+            }
+            else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
+                capture(moves, board, startPosition, backward, left, piece, board.getPiece(destinationPosition).getTeamColor(), null);
                 break;
             }
             else {
