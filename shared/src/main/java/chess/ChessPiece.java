@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -66,6 +67,77 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> validMoves = new ArrayList<>();
+
+        if (myPosition.getPieceType == PAWN) {
+            pawnMoves(validMoves, board, myPosition);
+            return validMoves;
+        }
+    }
+
+    private void pawnMoves(Collection<ChessMove> moves, ChessBoard board, ChessPosition startPosition) {
+        ChessPosition currentPosition = startPosition;
+
+        // Determine the correct movement direction
+        if (PieceType.getTeamColor() == WHITE) {
+            currentPosition = new ChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn());
+            moves.add(currentPosition);
+        }
+
+        if (PieceType.getTeamColor() == BLACK) {
+            currentPosition = new ChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn());
+            moves.add(currentPosition);
+        }
+
+        // Check if position is not off the board
+        if (currentPosition.getRow() < 0 || currentPosition.getRow() > 7 || currentPosition.getColumn() < 0 || currentPosition.getColumn() > 7) {
+            return;
+        }
+
+        // Check if there is a chess piece in front of the pawn
+        if (currentPosition != null) {
+            return;
+        }
+
+        // Check if the pawn made it to the other side of the board
+        if (PieceType.getTeamColor() == WHITE && currentPosition.getRow() == 7) {
+            currentPosition = PieceType.getPromotionPiece();
+        }
+
+        if (PieceType.getTeamColor() == BLACK && currentPosition.getRow() == 0) {
+            currentPosition = PieceType.getPromotionPiece();
+        }
+
+        // Check if there are any pieces that can be captured diagonally
+        if (PieceType.getTeamColor() == WHITE && ChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn() + 1) != null) {
+            currentPosition = new ChessPositionChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn() + 1);
+            moves.add(currentPosition);
+        }
+
+        if (PieceType.getTeamColor() == WHITE && ChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn() - 1) != null) {
+            currentPosition = new ChessPositionChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn() - 1);
+            moves.add(currentPosition);
+        }
+
+        if (PieceType.getTeamColor() == BLACK && ChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn() + 1) != null) {
+            currentPosition = new ChessPositionChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn() + 1);
+            moves.add(currentPosition);
+        }
+
+        if (PieceType.getTeamColor() == BLACK && ChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn() - 1) != null) {
+            currentPosition = new ChessPositionChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn() - 1);
+            moves.add(currentPosition);
+        }
+
+        // Check if this is the first move
+        if (PieceType.getTeamColor() == WHITE && currentPosition.getRow() == 1) {
+            currentPosition = new ChessPosition(currentPosition.getRow() + 2, currentPosition.getColumn());
+            moves.add(currentPosition);
+        }
+
+        if (PieceType.getTeamColor() == BLACK && currentPosition.getRow() == 6) {
+            currentPosition = new ChessPosition(currentPosition.getRow() - 2, currentPosition.getColumn());
+            moves.add(currentPosition);
+        }
     }
 }
