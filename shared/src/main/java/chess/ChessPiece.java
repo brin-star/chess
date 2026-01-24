@@ -83,14 +83,24 @@ public class ChessPiece {
         int newCol = startPosition.getColumn();
 
         // Check if this is the first move (move two spaces)
-        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE && startPosition.getRow() == 1) {
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE && startPosition.getRow() == 2) {
             int forward = newRow + 2;
-            moveforward(moves, board, startPosition, piece, forward, newCol, null);
+            int checkFirst = newRow + 1;
+
+            ChessPosition firstPosition = new ChessPosition(checkFirst, newCol);
+            if (board.getPiece(firstPosition) == null ) {
+                moveforward(moves, board, startPosition, piece, forward, newCol, null);
+            }
         }
 
-        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK && startPosition.getRow() == 6) {
+        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK && startPosition.getRow() == 7) {
             int forward = newRow - 2;
-            moveforward(moves, board, startPosition, piece, forward, newCol, null);
+            int checkFirst = newRow - 1;
+
+            ChessPosition firstPosition = new ChessPosition(checkFirst, newCol);
+            if (board.getPiece(firstPosition) == null ) {
+                moveforward(moves, board, startPosition, piece, forward, newCol, null);
+            }
         }
 
         // Move one space forward
