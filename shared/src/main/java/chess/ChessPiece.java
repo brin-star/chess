@@ -157,7 +157,11 @@ public class ChessPiece {
                 break;
             }
 
-            if (board.getPiece(destinationPosition) == null) {
+            if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
+                capture(moves, board, startPosition, forward, newCol, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+                break;
+            }
+            else if (board.getPiece(destinationPosition) == null) {
                 moveforward(moves, board, startPosition, piece, forward, newCol, null);
                 ++forward;
             }
@@ -174,7 +178,11 @@ public class ChessPiece {
                 break;
             }
 
-            if (board.getPiece(destinationPosition) == null) {
+            if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
+                capture(moves, board, startPosition, forward, newCol, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+                break;
+            }
+            else if (board.getPiece(destinationPosition) == null) {
                 moveforward(moves, board, startPosition, piece, forward, newCol, null);
                 --forward;
             }
@@ -192,7 +200,11 @@ public class ChessPiece {
                 break;
             }
 
-            if (board.getPiece(destinationPosition) == null) {
+            if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
+                capture(moves, board, startPosition, newRow, right, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+                break;
+            }
+            else if (board.getPiece(destinationPosition) == null) {
                 moveforward(moves, board, startPosition, piece, newRow, right, null);
                 ++right;
             }
@@ -210,7 +222,11 @@ public class ChessPiece {
                 break;
             }
 
-            if (board.getPiece(destinationPosition) == null) {
+            if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
+                capture(moves, board, startPosition, newRow, left, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+                break;
+            }
+            else if (board.getPiece(destinationPosition) == null) {
                 moveforward(moves, board, startPosition, piece, newRow, left, null);
                 --left;
             }
