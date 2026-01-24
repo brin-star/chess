@@ -158,7 +158,7 @@ public class ChessPiece {
             }
 
             if (board.getPiece(destinationPosition) == null) {
-                moveforward(moves, board, startPosition, piece, forward, newCol, null);
+                moves.add(new ChessMove(startPosition, destinationPosition, null));
                 ++forward;
             }
             else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
@@ -179,7 +179,7 @@ public class ChessPiece {
             }
 
             if (board.getPiece(destinationPosition) == null) {
-                moveforward(moves, board, startPosition, piece, forward, newCol, null);
+                moves.add(new ChessMove(startPosition, destinationPosition, null));
                 --forward;
             }
             else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
@@ -201,7 +201,7 @@ public class ChessPiece {
             }
 
             if (board.getPiece(destinationPosition) == null) {
-                moveforward(moves, board, startPosition, piece, newRow, right, null);
+                moves.add(new ChessMove(startPosition, destinationPosition, null));
                 ++right;
             }
             else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
@@ -223,7 +223,7 @@ public class ChessPiece {
             }
 
             if (board.getPiece(destinationPosition) == null) {
-                moveforward(moves, board, startPosition, piece, newRow, left, null);
+                moves.add(new ChessMove(startPosition, destinationPosition, null));
                 --left;
             }
             else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
