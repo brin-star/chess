@@ -230,14 +230,14 @@ public class ChessPiece {
         // Check right movements
         int right = newCol + 1;
         while (true) {
-            ChessPosition destinationPosition = new ChessPosition(right, newCol);
+            ChessPosition destinationPosition = new ChessPosition(newRow, right);
 
             if (right < 1 || right > 8) {
                 break;
             }
 
             if (board.getPiece(destinationPosition) == null) {
-                moveforward(moves, board, startPosition, piece, right, newCol, null);
+                moveforward(moves, board, startPosition, piece, newRow, right, null);
                 ++right;
             }
             else {
@@ -248,14 +248,14 @@ public class ChessPiece {
         // Check left movements
         int left = newCol - 1;
         while (true) {
-            ChessPosition destinationPosition = new ChessPosition(left, newCol);
+            ChessPosition destinationPosition = new ChessPosition(newRow, left);
 
             if (left < 1 || left > 8) {
                 break;
             }
 
             if (board.getPiece(destinationPosition) == null) {
-                moveforward(moves, board, startPosition, piece, left, newCol, null);
+                moveforward(moves, board, startPosition, piece, newRow, left, null);
                 --left;
             }
             else {
