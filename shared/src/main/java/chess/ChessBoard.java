@@ -40,7 +40,13 @@ public class ChessBoard {
     public void addPiece(ChessPosition position, ChessPiece piece) {
         int rowIndex = position.getRow() - 1;
         int colIndex = position.getColumn() - 1;
-        board[rowIndex][colIndex] = new ChessPiece(piece.getTeamColor(), piece.getPieceType());
+
+        if (piece != null) {
+            board[rowIndex][colIndex] = new ChessPiece(piece.getTeamColor(), piece.getPieceType());
+        }
+        else {
+            board[rowIndex][colIndex] = null;
+        }
     }
 
     /**
