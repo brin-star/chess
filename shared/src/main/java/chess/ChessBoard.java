@@ -37,10 +37,10 @@ public class ChessBoard implements Cloneable {
             ChessBoard copy = (ChessBoard) super.clone();
             copy.board = new ChessPiece[8][8];
 
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
-                    if (board[i][j] != null) {
-                        copy.board[i][j] = this.board[i][j].clone();
+            for (int row = 0; row < 8; row++) {
+                for (int col = 0; col < 8; col++) {
+                    if (board[row][col] != null) {
+                        copy.board[row][col] = this.board[row][col].clone();
                     }
                 }
             }
