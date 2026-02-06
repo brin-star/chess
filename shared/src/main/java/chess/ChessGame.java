@@ -126,23 +126,27 @@ public class ChessGame {
         TeamColor oppColor = (teamColor == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
 
         positionLoop:
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
                 currentPosition = new ChessPosition(row, col);
                 piece = board.getPiece(currentPosition);
-                if (piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
-                    kingPosition = currentPosition;
-                    break positionLoop;
+                if (piece != null) {
+                    if (piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
+                        kingPosition = currentPosition;
+                        break positionLoop;
+                    }
                 }
             }
         }
 
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
                 currentPosition = new ChessPosition(row, col);
                 piece = board.getPiece(currentPosition);
-                if (piece.pieceMoves(board, currentPosition).contains(kingPosition)) {
-                    return true;
+                if (piece != null) {
+                    if (piece.pieceMoves(board, currentPosition).contains(kingPosition)) {
+                        return true;
+                    }
                 }
             }
         }
