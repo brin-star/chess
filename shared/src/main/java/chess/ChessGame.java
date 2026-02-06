@@ -143,9 +143,12 @@ public class ChessGame {
             for (int col = 1; col < 9; col++) {
                 currentPosition = new ChessPosition(row, col);
                 piece = board.getPiece(currentPosition);
-                if (piece != null) {
-                    if (piece.pieceMoves(board, currentPosition).contains(kingPosition)) {
-                        return true;
+                if (piece != null && piece.getTeamColor() == oppColor) {
+                    Collection<ChessMove> moves = piece.pieceMoves(board, currentPosition);
+                    for (ChessMove move : moves) {
+                        if (move.getEndPosition().equals(kingPosition)) {
+                            return true;
+                        }
                     }
                 }
             }
