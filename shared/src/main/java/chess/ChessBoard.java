@@ -9,7 +9,7 @@ import java.util.Objects;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessBoard {
+public class ChessBoard implements Cloneable {
 
     @Override
     public boolean equals(Object o) {
@@ -29,6 +29,26 @@ public class ChessBoard {
 
     public ChessBoard() {
         board = new ChessPiece[8][8];
+    }
+
+    @Override
+    public ChessBoard clone() {
+        try {
+            ChessBoard copy = (ChessBoard) super.clone();
+            copy.board = new ChessPiece[8][8];
+
+            for (int row = 0; row < 8; row++) {
+                for (int col = 0; col < 8; col++) {
+                    if (board[row][col] != null) {
+                        copy.board[row][col] = this.board[row][col].clone();
+                    }
+                }
+            }
+
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
