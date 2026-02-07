@@ -152,6 +152,7 @@ public class ChessGame {
         ChessPiece piece;
         TeamColor oppColor = (teamColor == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
 
+        // Find king position
         positionLoop:
         for (int row = 1; row < 9; row++) {
             for (int col = 1; col < 9; col++) {
@@ -166,6 +167,7 @@ public class ChessGame {
             }
         }
 
+        // Check if a piece can capture the king
         for (int row = 1; row < 9; row++) {
             for (int col = 1; col < 9; col++) {
                 currentPosition = new ChessPosition(row, col);
@@ -224,7 +226,30 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        // Check if the team is in check
+        if (isInCheck(teamColor) == true) {
+            return false;
+        }
+
+        ChessPosition currentPosition;
+        ChessPiece piece;
+
+        // Check if the team has any valid moves (and therefore has an escape)
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
+                currentPosition = new ChessPosition(row, col);
+                piece = board.getPiece(currentPosition);
+                if (piece != null && piece.getTeamColor() == teamColor) {
+                    Collection<ChessMove> moves = validMoves(currentPosition);
+                    for (ChessMove move : moves) {
+                        if (move != null) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
