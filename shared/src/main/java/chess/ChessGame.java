@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -73,15 +74,18 @@ public class ChessGame {
         Collection<ChessMove> possibleMoves = piece.pieceMoves(board, startPosition);
         Collection<ChessMove> validMoves = new ArrayList<>();
         ChessBoard boardCopy;
+        ChessBoard boardOriginal = board;
 
         for (ChessMove move : possibleMoves) {
             ChessPosition endPosition = move.getEndPosition();
             boardCopy = board.clone();
             boardCopy.addPiece(endPosition, piece);
             boardCopy.addPiece(startPosition, null);
+            board = boardCopy;
             if (isInCheck(turn) == false) {
                 validMoves.add(move);
             }
+            board = boardOriginal;
         } 
 
         return validMoves;
