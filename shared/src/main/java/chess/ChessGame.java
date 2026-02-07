@@ -70,14 +70,15 @@ public class ChessGame {
             return null;
         }
 
-        Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
-        Collection<ChessMove> validMoves;
+        Collection<ChessMove> possibleMoves = piece.pieceMoves(board, startPosition);
+        Collection<ChessMove> validMoves = new ArrayList<>();
         ChessBoard boardCopy;
 
-        for (ChessMove move : moves) {
+        for (ChessMove move : possibleMoves) {
             ChessPosition endPosition = move.getEndPosition();
-            boardCopy = new ChessBoard(board);
+            boardCopy = board.clone();
             boardCopy.addPiece(endPosition, piece);
+            boardCopy.addPiece(startPosition, null);
             if (isInCheck(turn) == false) {
                 validMoves.add(move);
             }
