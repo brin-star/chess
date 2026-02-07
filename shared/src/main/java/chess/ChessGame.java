@@ -70,7 +70,20 @@ public class ChessGame {
             return null;
         }
 
-        return piece.pieceMoves(board, startPosition); // Will need to be changed
+        Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
+        Collection<ChessMove> validMoves;
+        ChessBoard boardCopy;
+
+        for (ChessMove move : moves) {
+            ChessPosition endPosition = move.getEndPosition();
+            boardCopy = new ChessBoard(board);
+            boardCopy.addPiece(endPosition, piece);
+            if (isInCheck(turn) == false) {
+                validMoves.add(move);
+            }
+        } 
+
+        return validMoves;
     }
 
     /**
