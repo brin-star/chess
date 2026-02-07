@@ -67,6 +67,7 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = board.getPiece(startPosition);
 
+        // Check that there is a piece at that position
         if (piece == null) {
             return null;
         }
@@ -76,13 +77,21 @@ public class ChessGame {
         ChessBoard boardCopy;
         ChessBoard boardOriginal = board;
 
+        // Check every move in the collection of possible moves
         for (ChessMove move : possibleMoves) {
             ChessPosition endPosition = move.getEndPosition();
+
+            // Move piece on the copy board
             boardCopy = board.clone();
             boardCopy.addPiece(endPosition, piece);
             boardCopy.addPiece(startPosition, null);
+            TeamColor pieceColor = piece.getTeamColor();
+
+            // Temporarily change board to board copy so isInCheck() works
             board = boardCopy;
-            if (isInCheck(turn) == false) {
+
+            // Make sure it doesn't leave the king exposed
+            if (isInCheck(pieceColor) == false) {
                 validMoves.add(move);
             }
             board = boardOriginal;
