@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -27,9 +28,17 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(String userName, String playerColor, int gameID) throws DataAccessException {
-        GameData exitingGame = getGame(gameID);
+    public void updateGame(String userName, ChessGame.TeamColor playerColor, int gameID) throws DataAccessException {
+        GameData existingGame = getGame(gameID);
+        GameData newGame;
 
+        if (playerColor.equals(ChessGame.TeamColor.WHITE)) {
+            newGame = new GameData(gameID, userName, existingGame.blackUsername(), existingGame.gameName(), existingGame.game());
+        }
+        else {
+            newGame = new GameData(gameID, existingGame.whiteUsername(), userName, existingGame.gameName(), existingGame.game());
+        }
+        games.put(newGame.gameID(), newGame);
     }
 
     @Override
