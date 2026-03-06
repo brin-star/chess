@@ -2,8 +2,10 @@ package server;
 
 import dataaccess.*;
 import handler.ClearHandler;
+import handler.RegisterHandler;
 import io.javalin.*;
 import service.ClearService;
+import service.RegisterService;
 
 public class Server {
 
@@ -25,6 +27,11 @@ public class Server {
         ClearService clearService = new ClearService(authDAO, gameDAO, userDAO);
         ClearHandler clearHandler = new ClearHandler(clearService);
         javalin.delete("/db", clearHandler::clear);
+
+        // Register endpoint
+        RegisterService registerService = new RegisterService(authDAO, userDAO);
+        RegisterHandler registerHandler = new RegisterHandler(registerService);
+        javalin.post("/user", registerHandler::register);
 
     }
 
