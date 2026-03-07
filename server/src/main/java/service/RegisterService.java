@@ -18,7 +18,6 @@ public class RegisterService {
     }
 
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
-        UserData userData = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
 
         if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
             throw new BadRequestException("Bad Request");
@@ -26,6 +25,8 @@ public class RegisterService {
         if (userDAO.getUser(registerRequest.username()) != null) {
             throw new AlreadyTakenException("Username already taken");
         }
+        UserData userData = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
+
         userDAO.createUser(userData);
         String token = UUID.randomUUID().toString();
         AuthData authData = new AuthData(token, registerRequest.username());
