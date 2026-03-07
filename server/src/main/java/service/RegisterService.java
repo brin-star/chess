@@ -20,7 +20,7 @@ public class RegisterService {
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
 
         if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
-            throw new BadRequestException("Bad Request");
+            throw new BadRequestException("Bad request");
         }
         if (userDAO.getUser(registerRequest.username()) != null) {
             throw new AlreadyTakenException("Username already taken");
