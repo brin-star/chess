@@ -3,10 +3,12 @@ package server;
 import dataaccess.*;
 import handler.ClearHandler;
 import handler.LoginHandler;
+import handler.LogoutHandler;
 import handler.RegisterHandler;
 import io.javalin.*;
 import service.ClearService;
 import service.LoginService;
+import service.LogoutService;
 import service.RegisterService;
 
 public class Server {
@@ -39,6 +41,11 @@ public class Server {
         LoginService loginService = new LoginService(authDAO, userDAO);
         LoginHandler loginHandler = new LoginHandler(loginService);
         javalin.post("/session", loginHandler::login);
+
+        // Logout endpoint
+        LogoutService logoutService = new LogoutService(authDAO);
+        LogoutHandler logoutHandler = new LogoutHandler(logoutService);
+        javalin.delete("/session", logoutHandler::logout);
 
     }
 
