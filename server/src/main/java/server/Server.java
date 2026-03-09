@@ -1,15 +1,9 @@
 package server;
 
 import dataaccess.*;
-import handler.ClearHandler;
-import handler.LoginHandler;
-import handler.LogoutHandler;
-import handler.RegisterHandler;
+import handler.*;
 import io.javalin.*;
-import service.ClearService;
-import service.LoginService;
-import service.LogoutService;
-import service.RegisterService;
+import service.*;
 
 public class Server {
 
@@ -46,6 +40,11 @@ public class Server {
         LogoutService logoutService = new LogoutService(authDAO);
         LogoutHandler logoutHandler = new LogoutHandler(logoutService);
         javalin.delete("/session", logoutHandler::logout);
+
+        // List Games endpoint
+        ListGamesService listGamesService = new ListGamesService(gameDAO, authDAO);
+        ListGamesHandler listGamesHandler = new ListGamesHandler(listGamesService);
+        javalin.get("/game", listGamesHandler::listGames);
 
     }
 
