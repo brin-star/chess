@@ -46,6 +46,11 @@ public class Server {
         ListGamesHandler listGamesHandler = new ListGamesHandler(listGamesService);
         javalin.get("/game", listGamesHandler::listGames);
 
+        // Create Game endpoint
+        CreateGameService createGameService = new CreateGameService(authDAO, gameDAO);
+        CreateGameHandler createGameHandler = new CreateGameHandler(createGameService);
+        javalin.post("/game", createGameHandler::createGame);
+
     }
 
     public int run(int desiredPort) {
