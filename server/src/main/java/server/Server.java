@@ -41,15 +41,20 @@ public class Server {
         LogoutHandler logoutHandler = new LogoutHandler(logoutService);
         javalin.delete("/session", logoutHandler::logout);
 
-        // List Games endpoint
+        // List games endpoint
         ListGamesService listGamesService = new ListGamesService(gameDAO, authDAO);
         ListGamesHandler listGamesHandler = new ListGamesHandler(listGamesService);
         javalin.get("/game", listGamesHandler::listGames);
 
-        // Create Game endpoint
+        // Create game endpoint
         CreateGameService createGameService = new CreateGameService(authDAO, gameDAO);
         CreateGameHandler createGameHandler = new CreateGameHandler(createGameService);
         javalin.post("/game", createGameHandler::createGame);
+
+        // Update game endpoint
+        JoinGameService joinGameService = new JoinGameService(authDAO, gameDAO);
+        JoinGameHandler joinGameHandler = new JoinGameHandler(joinGameService);
+        javalin.put("/game", joinGameHandler::updateGame);
 
     }
 
