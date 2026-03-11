@@ -192,30 +192,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        // Check if in check
-        if (isInCheck(teamColor) == false) {
-            return false;
-        }
-
-        ChessPosition currentPosition;
-        ChessPiece piece;
-
-        // Check if the team has any valid moves (and therefore has an escape)
-        for (int row = 1; row < 9; row++) {
-            for (int col = 1; col < 9; col++) {
-                currentPosition = new ChessPosition(row, col);
-                piece = board.getPiece(currentPosition);
-                if (piece != null && piece.getTeamColor() == teamColor) {
-                    Collection<ChessMove> moves = validMoves(currentPosition);
-                    for (ChessMove move : moves) {
-                        if (move != null) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-        return true;
+        return checkMoves(teamColor, false);
     }
 
     /**
@@ -226,8 +203,20 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        return checkMoves(teamColor, true);
+    }
+
+    /**
+     * This function does the checking for
+     * isInStalemate and isInCheckmate
+     *
+     * @param teamColor
+     * @param check
+     * @return True if checkmate or stalemate
+     */
+    public boolean checkMoves(TeamColor teamColor, boolean check) {
         // Check if the team is in check
-        if (isInCheck(teamColor) == true) {
+        if (isInCheck(teamColor) == check) {
             return false;
         }
 
