@@ -604,26 +604,10 @@ public class ChessPiece implements Cloneable {
             ChessPosition destinationPosition = new ChessPosition(newRow, newCol);
             ChessPiece destinationPiece = board.getPiece(destinationPosition);
             if (destinationPiece != null && destinationPiece.getTeamColor() == enemyColor) {
-                if (piece.getPieceType() == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.WHITE && newRow == 8) {
-                    ChessMove validMove = new ChessMove(startPosition, destinationPosition, PieceType.QUEEN);
-                    moves.add(validMove);
-                    validMove = new ChessMove(startPosition, destinationPosition, PieceType.BISHOP);
-                    moves.add(validMove);
-                    validMove = new ChessMove(startPosition, destinationPosition, PieceType.ROOK);
-                    moves.add(validMove);
-                    validMove = new ChessMove(startPosition, destinationPosition, PieceType.KNIGHT);
-                    moves.add(validMove);
-                    return;
-                }
-                else if (piece.getPieceType() == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.BLACK && newRow == 1) {
-                    ChessMove validMove = new ChessMove(startPosition, destinationPosition, PieceType.QUEEN);
-                    moves.add(validMove);
-                    validMove = new ChessMove(startPosition, destinationPosition, PieceType.BISHOP);
-                    moves.add(validMove);
-                    validMove = new ChessMove(startPosition, destinationPosition, PieceType.ROOK);
-                    moves.add(validMove);
-                    validMove = new ChessMove(startPosition, destinationPosition, PieceType.KNIGHT);
-                    moves.add(validMove);
+                if (piece.getPieceType() == PieceType.PAWN
+                        && ((piece.getTeamColor() == ChessGame.TeamColor.WHITE && newRow == 8)
+                        || (piece.getTeamColor() == ChessGame.TeamColor.BLACK && newRow == 1))) {
+                    promote(moves, startPosition, destinationPosition);
                     return;
                 }
                 ChessMove validMove = new ChessMove(startPosition, destinationPosition, promotion);
