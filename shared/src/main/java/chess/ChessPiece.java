@@ -572,25 +572,11 @@ public class ChessPiece implements Cloneable {
             ChessPosition destinationPosition = new ChessPosition(newRow, newCol);
             ChessPiece destinationPiece = board.getPiece(destinationPosition);
             // Check if it can be promoted
-            if (piece.getPieceType() == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.WHITE && newRow == 8 && destinationPiece == null) {
-                ChessMove validMove = new ChessMove(startPosition, destinationPosition, PieceType.QUEEN);
-                moves.add(validMove);
-                validMove = new ChessMove(startPosition, destinationPosition, PieceType.BISHOP);
-                moves.add(validMove);
-                validMove = new ChessMove(startPosition, destinationPosition, PieceType.ROOK);
-                moves.add(validMove);
-                validMove = new ChessMove(startPosition, destinationPosition, PieceType.KNIGHT);
-                moves.add(validMove);
-            }
-            else if (piece.getPieceType() == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.BLACK && newRow == 1 && destinationPiece == null) {
-                ChessMove validMove = new ChessMove(startPosition, destinationPosition, PieceType.QUEEN);
-                moves.add(validMove);
-                validMove = new ChessMove(startPosition, destinationPosition, PieceType.BISHOP);
-                moves.add(validMove);
-                validMove = new ChessMove(startPosition, destinationPosition, PieceType.ROOK);
-                moves.add(validMove);
-                validMove = new ChessMove(startPosition, destinationPosition, PieceType.KNIGHT);
-                moves.add(validMove);
+            if (piece.getPieceType() == PieceType.PAWN
+                    && ((piece.getTeamColor() == ChessGame.TeamColor.WHITE && newRow == 8)
+                            || (piece.getTeamColor() == ChessGame.TeamColor.BLACK && newRow == 1))
+                    && destinationPiece == null) {
+                promote(moves, startPosition, destinationPosition);
             }
             // Can't be promoted
             else if (destinationPiece == null) {
@@ -598,6 +584,17 @@ public class ChessPiece implements Cloneable {
                 moves.add(validMove);
             }
         }
+    }
+
+    private void promote(Collection<ChessMove> moves, ChessPosition startPosition, ChessPosition destinationPosition) {
+        ChessMove validMove = new ChessMove(startPosition, destinationPosition, PieceType.QUEEN);
+        moves.add(validMove);
+        validMove = new ChessMove(startPosition, destinationPosition, PieceType.BISHOP);
+        moves.add(validMove);
+        validMove = new ChessMove(startPosition, destinationPosition, PieceType.ROOK);
+        moves.add(validMove);
+        validMove = new ChessMove(startPosition, destinationPosition, PieceType.KNIGHT);
+        moves.add(validMove);
     }
 
     private void capture(Collection<ChessMove> moves, ChessBoard board, ChessPosition startPosition, int newRow, int newCol, ChessPiece piece, ChessGame.TeamColor enemyColor, ChessPiece.PieceType promotion) {
