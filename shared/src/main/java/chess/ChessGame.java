@@ -173,13 +173,28 @@ public class ChessGame {
                 currentPosition = new ChessPosition(row, col);
                 piece = board.getPiece(currentPosition);
                 if (piece != null && piece.getTeamColor() == oppColor) {
-                    Collection<ChessMove> moves = piece.pieceMoves(board, currentPosition);
-                    for (ChessMove move : moves) {
-                        if (move.getEndPosition().equals(kingPosition)) {
-                            return true;
-                        }
+                    if (kingThreatened(piece, currentPosition, kingPosition)) {
+                        return true;
                     }
                 }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the king is threatened
+     *
+     * @param piece
+     * @param currentPosition
+     * @param kingPosition
+     * @return True if the king is threatened
+     */
+    public boolean kingThreatened(ChessPiece piece, ChessPosition currentPosition, ChessPosition kingPosition) {
+        Collection<ChessMove> moves = piece.pieceMoves(board, currentPosition);
+        for (ChessMove move : moves) {
+            if (move.getEndPosition().equals(kingPosition)) {
+                return true;
             }
         }
         return false;
@@ -229,11 +244,8 @@ public class ChessGame {
                 currentPosition = new ChessPosition(row, col);
                 piece = board.getPiece(currentPosition);
                 if (piece != null && piece.getTeamColor() == teamColor) {
-                    Collection<ChessMove> moves = validMoves(currentPosition);
-                    for (ChessMove move : moves) {
-                        if (move != null) {
-                            return false;
-                        }
+                    if (!validMoves(currentPosition).isEmpty()) {
+                        return false;
                     }
                 }
             }
