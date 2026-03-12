@@ -352,22 +352,7 @@ public class ChessPiece implements Cloneable {
                 {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
         };
 
-        for (int[] position : kingPositions) {
-            int destinationRow = newRow + position[0];
-            int destinationCol = newCol + position[1];
-
-            if (destinationRow < 1 || destinationRow > 8 || destinationCol < 1 || destinationCol > 8) {
-                continue;
-            }
-
-            ChessPosition destinationPosition = new ChessPosition(destinationRow, destinationCol);
-
-            if (board.getPiece(destinationPosition) == null) {
-                moveforward(moves, board, startPosition, piece, destinationRow, destinationCol, null);
-            } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
-                capture(moves, board, startPosition, destinationRow, destinationCol, piece, board.getPiece(destinationPosition).getTeamColor(), null);
-            }
-        }
+        checkPositions(kingPositions, newRow, newCol, board, startPosition, piece, moves);
     }
 
     private void knightMoves(Collection<ChessMove> moves, ChessBoard board, ChessPosition startPosition, ChessPiece piece) {
@@ -379,7 +364,13 @@ public class ChessPiece implements Cloneable {
                 {1, 2}, {1, -2}, {-1, 2}, {-1, -2}
         };
 
-        for (int[] position : knightPositions) {
+        checkPositions(knightPositions, newRow, newCol, board, startPosition, piece, moves);
+    }
+
+    public void checkPositions(int[][] positions, int newRow, int newCol,
+                               ChessBoard board, ChessPosition startPosition,
+                               ChessPiece piece, Collection<ChessMove> moves) {
+        for (int[] position : positions) {
             int destinationRow = newRow + position[0];
             int destinationCol = newCol + position[1];
 
