@@ -113,63 +113,41 @@ public class ChessPiece implements Cloneable {
     private void pawnMoves(Collection<ChessMove> moves, ChessBoard board, ChessPosition startPosition, ChessPiece piece) {
         int newRow = startPosition.getRow();
         int newCol = startPosition.getColumn();
+        int forward;
+        int startRow;
+        int promotionRow;
+        ChessGame.TeamColor oppColor;
 
-        // Check if this is the first move (move two spaces)
-        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE && startPosition.getRow() == 2) {
-            int forward = newRow + 2;
-            int checkFirst = newRow + 1;
-
-            ChessPosition firstPosition = new ChessPosition(checkFirst, newCol);
-            if (board.getPiece(firstPosition) == null ) {
-                moveforward(moves, board, startPosition, piece, forward, newCol, null);
-            }
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            forward = 1;
+            startRow = 2;
+            promotionRow = 8;
+            oppColor = ChessGame.TeamColor.BLACK;
+        }
+        else {
+            forward = -1;
+            startRow = 7;
+            promotionRow = 1;
+            oppColor = ChessGame.TeamColor.WHITE;
         }
 
-        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK && startPosition.getRow() == 7) {
-            int forward = newRow - 2;
-            int checkFirst = newRow - 1;
+        // Check if this is the first move (move two spaces)
+        if (startPosition.getRow() == startRow) {
+            int move = newRow + (forward * 2);
+            int checkFirst = newRow + forward;
 
             ChessPosition firstPosition = new ChessPosition(checkFirst, newCol);
             if (board.getPiece(firstPosition) == null ) {
-                moveforward(moves, board, startPosition, piece, forward, newCol, null);
+                moveforward(moves, board, startPosition, piece, move, newCol, null);
             }
         }
 
         // Move one space forward
-        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            int forward = newRow + 1;
-            moveforward(moves, board, startPosition, piece, forward, newCol, null);
-        }
-
-        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
-            int forward = newRow - 1;
-            moveforward(moves, board, startPosition, piece, forward, newCol, null);
-        }
+        moveforward(moves, board, startPosition, piece, newRow + forward, newCol, null);
 
         // Check if there are any pieces that can be captured diagonally
-        // White pawns
-        int diagonalRow = newRow + 1;
-        int diagonalCol = newCol + 1;
-        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            capture(moves, board, startPosition, diagonalRow, diagonalCol, piece, ChessGame.TeamColor.BLACK, null);
-        }
-
-        diagonalCol = newCol - 1;
-        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            capture(moves, board, startPosition, diagonalRow, diagonalCol, piece, ChessGame.TeamColor.BLACK, null);
-        }
-
-        // Black pawns
-        diagonalRow = newRow - 1;
-        diagonalCol = newCol + 1;
-        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
-            capture(moves, board, startPosition, diagonalRow, diagonalCol, piece, ChessGame.TeamColor.WHITE, null);
-        }
-
-        diagonalCol = newCol - 1;
-        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
-            capture(moves, board, startPosition, diagonalRow, diagonalCol, piece, ChessGame.TeamColor.WHITE, null);
-        }
+        capture(moves, board, startPosition, newRow + forward, newCol + forward, piece, oppColor, null);
+        capture(moves, board, startPosition, newRow + forward, newCol - forward, piece, oppColor, null);
     }
 
     private void rookMoves(Collection<ChessMove> moves, ChessBoard board, ChessPosition startPosition, ChessPiece piece) {
@@ -371,7 +349,6 @@ public class ChessPiece implements Cloneable {
 
         // Check forward and backward movements
         int forward = newRow + 1;
-
         if (forward >= 1 && forward <= 8 && newCol >= 1 && newCol <= 8) {
             ChessPosition destinationPosition = new ChessPosition(forward, newCol);
 
@@ -524,7 +501,10 @@ public class ChessPiece implements Cloneable {
         moves.add(validMove);
     }
 
-    private void capture(Collection<ChessMove> moves, ChessBoard board, ChessPosition startPosition, int newRow, int newCol, ChessPiece piece, ChessGame.TeamColor enemyColor, ChessPiece.PieceType promotion) {
+    private void capture(Collection<ChessMove> moves, ChessBoard board,
+                         ChessPosition startPosition, int newRow, int newCol,
+                         ChessPiece piece, ChessGame.TeamColor enemyColor,
+                         ChessPiece.PieceType promotion) {
         // Check if position is not off the board
         if (newRow >= 1 && newRow <= 8 && newCol >= 1 && newCol <= 8) {
             // Check if there is a chess piece in front of the piece
