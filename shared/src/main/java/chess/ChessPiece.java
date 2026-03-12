@@ -347,95 +347,25 @@ public class ChessPiece implements Cloneable {
         int newRow = startPosition.getRow();
         int newCol = startPosition.getColumn();
 
-        // Check forward and backward movements
-        int forward = newRow + 1;
-        if (forward >= 1 && forward <= 8 && newCol >= 1 && newCol <= 8) {
-            ChessPosition destinationPosition = new ChessPosition(forward, newCol);
+        int[][] kingPositions = {
+                {0, 1}, {0, -1}, {1, 0}, {-1, 0},
+                {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
+        };
 
-            if (board.getPiece(destinationPosition) == null) {
-                moveforward(moves, board, startPosition, piece, forward, newCol, null);
-            } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
-                capture(moves, board, startPosition, forward, newCol, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+        for (int[] position : kingPositions) {
+            int destinationRow = newRow + position[0];
+            int destinationCol = newCol + position[1];
+
+            if (destinationRow < 1 || destinationRow > 8 || destinationCol < 1 || destinationCol > 8) {
+                continue;
             }
-        }
 
-        int backward = newRow - 1;
-        if (backward >= 1 && backward <= 8 && newCol >= 1 && newCol <= 8) {
-            ChessPosition destinationPosition = new ChessPosition(backward, newCol);
+            ChessPosition destinationPosition = new ChessPosition(destinationRow, destinationCol);
 
             if (board.getPiece(destinationPosition) == null) {
-                moveforward(moves, board, startPosition, piece, backward, newCol, null);
+                moveforward(moves, board, startPosition, piece, destinationRow, destinationCol, null);
             } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
-                capture(moves, board, startPosition, backward, newCol, piece, board.getPiece(destinationPosition).getTeamColor(), null);
-            }
-        }
-
-        // Check right movements
-        int right = newCol + 1;
-        if (newRow >= 1 && newRow <= 8 && right >= 1 && right <= 8) {
-            ChessPosition destinationPosition = new ChessPosition(newRow, right);
-
-            if (board.getPiece(destinationPosition) == null) {
-                moveforward(moves, board, startPosition, piece, newRow, right, null);
-            } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
-                capture(moves, board, startPosition, newRow, right, piece, board.getPiece(destinationPosition).getTeamColor(), null);
-            }
-        }
-
-        // Check left movements
-        int left = newCol - 1;
-        if (newRow >= 1 && newRow <= 8 && left >= 1 && left <= 8) {
-            ChessPosition destinationPosition = new ChessPosition(newRow, left);
-
-            if (board.getPiece(destinationPosition) == null) {
-                moveforward(moves, board, startPosition, piece, newRow, left, null);
-            } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
-                capture(moves, board, startPosition, newRow, left, piece, board.getPiece(destinationPosition).getTeamColor(), null);
-            }
-        }
-
-        // Check top right corner diagonal
-        if (forward >= 1 && forward <= 8 && right >= 1 && right <= 8) {
-            ChessPosition destinationPosition = new ChessPosition(forward, right);
-
-            if (board.getPiece(destinationPosition) == null) {
-                moveforward(moves, board, startPosition, piece, forward, right, null);
-            } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
-                capture(moves, board, startPosition, forward, right, piece, board.getPiece(destinationPosition).getTeamColor(), null);
-            }
-        }
-
-
-        // Check top left corner diagonal
-        if (forward >= 1 && forward <= 8 && left >= 1 && left <= 8) {
-            ChessPosition destinationPosition = new ChessPosition(forward, left);
-
-            if (board.getPiece(destinationPosition) == null) {
-                moveforward(moves, board, startPosition, piece, forward, left, null);
-            } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
-                capture(moves, board, startPosition, forward, left, piece, board.getPiece(destinationPosition).getTeamColor(), null);
-            }
-        }
-
-        // Check bottom right movements
-        if (backward >= 1 && backward <= 8 && right >= 1 && right <= 8) {
-            ChessPosition destinationPosition = new ChessPosition(backward, right);
-
-            if (board.getPiece(destinationPosition) == null) {
-                moveforward(moves, board, startPosition, piece, backward, right, null);
-            } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
-                capture(moves, board, startPosition, backward, right, piece, board.getPiece(destinationPosition).getTeamColor(), null);
-            }
-        }
-
-        // Check bottom left movements
-        if (backward >= 1 && backward <= 8 && left >= 1 && left <= 8) {
-            ChessPosition destinationPosition = new ChessPosition(backward, left);
-
-            if (board.getPiece(destinationPosition) == null) {
-                moveforward(moves, board, startPosition, piece, backward, left, null);
-            } else if (board.getPiece(destinationPosition).getTeamColor() != piece.getTeamColor()) {
-                capture(moves, board, startPosition, backward, left, piece, board.getPiece(destinationPosition).getTeamColor(), null);
+                capture(moves, board, startPosition, destinationRow, destinationCol, piece, board.getPiece(destinationPosition).getTeamColor(), null);
             }
         }
     }
