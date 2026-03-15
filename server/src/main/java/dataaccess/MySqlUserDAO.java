@@ -1,5 +1,7 @@
 package dataaccess;
 
+import model.UserData;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -33,5 +35,20 @@ public class MySqlUserDAO implements UserDAO {
         } catch (SQLException ex) {
             throw new DataAccessException("Unable to configure database: " + ex.getMessage());
         }
+    }
+
+    @Override
+    public UserData getUser(String username) throws DataAccessException {
+        return null;
+    }
+
+    @Override
+    public void createUser(UserData userData) throws DataAccessException {
+
+    }
+
+    @Override
+    public void clear() throws DataAccessException {
+
     }
 }

@@ -1,5 +1,7 @@
 package dataaccess;
 
+import model.AuthData;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -33,5 +35,25 @@ public class MySqlAuthDAO implements AuthDAO {
         } catch (SQLException ex) {
             throw new DataAccessException("Unable to configure database: " + ex.getMessage());
         }
+    }
+
+    @Override
+    public void createAuth(AuthData authData) throws DataAccessException {
+
+    }
+
+    @Override
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        return null;
+    }
+
+    @Override
+    public void deleteAuth(String authToken) throws DataAccessException {
+
+    }
+
+    @Override
+    public void clear() throws DataAccessException {
+
     }
 }

@@ -1,7 +1,11 @@
 package dataaccess;
 
+import chess.ChessGame;
+import model.GameData;
+
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import static dataaccess.DatabaseManager.*;
 
@@ -37,5 +41,30 @@ public class MySqlGameDAO implements GameDAO{
         } catch (SQLException ex) {
             throw new DataAccessException("Unable to configure database: " + ex.getMessage());
         }
+    }
+
+    @Override
+    public void createGame(GameData gameData) throws DataAccessException {
+
+    }
+
+    @Override
+    public GameData getGame(int gameID) throws DataAccessException {
+        return null;
+    }
+
+    @Override
+    public List<GameData> listGames() throws DataAccessException {
+        return List.of();
+    }
+
+    @Override
+    public void updateGame(String userName, ChessGame.TeamColor playerColor, int gameID) throws DataAccessException {
+
+    }
+
+    @Override
+    public void clear() throws DataAccessException {
+
     }
 }

@@ -9,15 +9,19 @@ public class Server {
 
     private final Javalin javalin;
 
+    private UserDAO userDAO;
     private AuthDAO authDAO;
     private GameDAO gameDAO;
-    private UserDAO userDAO;
 
 
     public Server() {
-        authDAO = new MemoryAuthDAO();
-        gameDAO = new MemoryGameDAO();
-        userDAO = new MemoryUserDAO();
+        try {
+            userDAO = new MySqlUserDAO();
+            authDAO = new MySqlAuthDAO();
+            gameDAO = new MySqlGameDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Failed to initialize DAOs: " + e.getMessage());
+        }
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
