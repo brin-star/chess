@@ -4,6 +4,7 @@ import chess.ChessGame;
 import model.GameData;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -15,7 +16,16 @@ public class MySqlGameDAO implements GameDAO{
         configureDatabase();
     }
 
-
+    public void clear() throws DataAccessException {
+        try (var conn = getConnection()) {
+            var statement = "TRUNCATE games";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to clear games: " + e.getMessage());
+        }
+    }
 
     private final String createStatement =
             """
@@ -60,11 +70,6 @@ public class MySqlGameDAO implements GameDAO{
 
     @Override
     public void updateGame(String userName, ChessGame.TeamColor playerColor, int gameID) throws DataAccessException {
-
-    }
-
-    @Override
-    public void clear() throws DataAccessException {
 
     }
 }

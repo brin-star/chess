@@ -3,6 +3,7 @@ package dataaccess;
 import model.AuthData;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import static dataaccess.DatabaseManager.*;
@@ -13,7 +14,16 @@ public class MySqlAuthDAO implements AuthDAO {
         configureDatabase();
     }
 
-
+    public void clear() throws DataAccessException {
+        try (var conn = getConnection()) {
+            var statement = "TRUNCATE auth_tokens";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to clear auth_tokens: " + e.getMessage());
+        }
+    }
 
     private final String createStatement =
             """
@@ -49,11 +59,6 @@ public class MySqlAuthDAO implements AuthDAO {
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
-
-    }
-
-    @Override
-    public void clear() throws DataAccessException {
 
     }
 }
