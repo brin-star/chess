@@ -32,7 +32,7 @@ public class MySqlGameDAO implements GameDAO{
 
 
     public MySqlGameDAO() throws DataAccessException {
-        MySqlBaseDAO.configureDatabase(createStatement);
+        configureDatabase(createStatement);
     }
 
     public void createGame(GameData gameData) throws DataAccessException {

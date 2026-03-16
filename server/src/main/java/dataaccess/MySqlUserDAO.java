@@ -23,7 +23,7 @@ public class MySqlUserDAO implements UserDAO {
         ;
 
     public MySqlUserDAO() throws DataAccessException {
-        MySqlBaseDAO.configureDatabase(createStatement);
+        configureDatabase(createStatement);
     }
 
     public UserData getUser(String username) throws DataAccessException {

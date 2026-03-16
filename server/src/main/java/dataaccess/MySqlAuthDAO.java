@@ -22,7 +22,7 @@ public class MySqlAuthDAO implements AuthDAO {
         ;
 
     public MySqlAuthDAO() throws DataAccessException {
-        MySqlBaseDAO.configureDatabase(createStatement);
+        configureDatabase(createStatement);
     }
 
     public void createAuth(AuthData authData) throws DataAccessException {
