@@ -95,7 +95,10 @@ public class MySqlGameDAO implements GameDAO{
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 ps.setString(1, userName);
                 ps.setInt(2, gameID);
-                ps.executeUpdate();
+                int rowsAffected = ps.executeUpdate();
+                if (rowsAffected == 0) {
+                    throw new DataAccessException("No games were updated");
+                }
             }
         } catch (SQLException e) {
             throw new DataAccessException("Unable to update game: " + e.getMessage());
