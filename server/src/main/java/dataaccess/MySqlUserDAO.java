@@ -3,7 +3,6 @@ package dataaccess;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,8 +11,19 @@ import static dataaccess.DatabaseManager.*;
 
 public class MySqlUserDAO implements UserDAO {
 
+    private final String createStatement =
+        """
+        CREATE TABLE IF NOT EXISTS users (
+            `username` VARCHAR(256) NOT NULL,
+            `password` VARCHAR(256) NOT NULL,
+            `email`    VARCHAR(256) NOT NULL,
+            PRIMARY KEY (`username`)
+        )
+        """
+        ;
+
     public MySqlUserDAO() throws DataAccessException {
-        configureDatabase();
+        MySqlBaseDAO.configureDatabase(createStatement);
     }
 
     public UserData getUser(String username) throws DataAccessException {
@@ -63,27 +73,4 @@ public class MySqlUserDAO implements UserDAO {
             throw new DataAccessException("Unable to clear users: " + e.getMessage());
         }
     }
-
-    private final String createStatement =
-            """
-            CREATE TABLE IF NOT EXISTS users (
-                `username` VARCHAR(256) NOT NULL,
-                `password` VARCHAR(256) NOT NULL,
-                `email`    VARCHAR(256) NOT NULL,
-                PRIMARY KEY (`username`)
-            )
-            """
-    ;
-
-    private void configureDatabase() throws DataAccessException {
-        createDatabase();
-        try (Connection conn = getConnection()) {
-            try (var preparedStatement = conn.prepareStatement(createStatement)) {
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException("Unable to configure database: " + e.getMessage());
-        }
-    }
-
 }

@@ -2,7 +2,6 @@ package dataaccess;
 
 import model.AuthData;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,8 +10,19 @@ import static dataaccess.DatabaseManager.*;
 
 public class MySqlAuthDAO implements AuthDAO {
 
+    private final String createStatement =
+        """
+        CREATE TABLE IF NOT EXISTS auth_tokens (
+            `token`    VARCHAR(256) NOT NULL,
+            `username` VARCHAR(256) NOT NULL,
+            PRIMARY KEY (`token`),
+            FOREIGN KEY (`username`) REFERENCES users(`username`)
+        )
+        """
+        ;
+
     public MySqlAuthDAO() throws DataAccessException {
-        configureDatabase();
+        MySqlBaseDAO.configureDatabase(createStatement);
     }
 
     public void createAuth(AuthData authData) throws DataAccessException {
@@ -69,28 +79,6 @@ public class MySqlAuthDAO implements AuthDAO {
             }
         } catch (SQLException e) {
             throw new DataAccessException("Unable to clear auth_tokens: " + e.getMessage());
-        }
-    }
-
-    private final String createStatement =
-            """
-            CREATE TABLE IF NOT EXISTS auth_tokens (
-                `token`    VARCHAR(256) NOT NULL,
-                `username` VARCHAR(256) NOT NULL,
-                PRIMARY KEY (`token`),
-                FOREIGN KEY (`username`) REFERENCES users(`username`)
-            )
-            """
-    ;
-
-    private void configureDatabase() throws DataAccessException {
-        createDatabase();
-        try (Connection conn = getConnection()) {
-            try (var preparedStatement = conn.prepareStatement(createStatement)) {
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException("Unable to configure database: " + ex.getMessage());
         }
     }
 }
