@@ -7,15 +7,15 @@ import model.GameData;
 import result.CreateGameRequest;
 import result.CreateGameResult;
 
+import java.util.UUID;
+
 public class CreateGameService {
     private AuthDAO authDAO;
     private GameDAO gameDAO;
-    private int counter;
 
     public CreateGameService(AuthDAO authDAO, GameDAO gameDAO) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
-        this.counter = 1;
     }
 
     public CreateGameResult createGame(CreateGameRequest createGameRequest) throws DataAccessException {
@@ -33,9 +33,7 @@ public class CreateGameService {
             throw new BadRequestException("Missing game name");
         }
 
-        int gameID = counter;
-
-        counter++;
+        int gameID = Math.abs(UUID.randomUUID().hashCode());
 
         ChessGame game = new ChessGame();
         GameData newGame = new GameData(gameID, null, null, createGameRequest.gameName(), game);
