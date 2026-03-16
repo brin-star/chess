@@ -3,6 +3,7 @@ package service;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import result.LoginRequest;
 import result.LoginResult;
 
@@ -27,7 +28,7 @@ public class LoginService {
         if (requestedUser == null) {
             throw new UnauthorizedException("Incorrect login");
         }
-        if (!Objects.equals(requestedUser.password(), loginRequest.password())) {
+        if (!BCrypt.checkpw(loginRequest.password(), requestedUser.password())) {
             throw new UnauthorizedException("Incorrect login");
         }
 
