@@ -1,6 +1,7 @@
 package ServerFacade;
 
 import com.google.gson.Gson;
+import result.ClearResult;
 import result.RegisterRequest;
 import result.RegisterResult;
 
@@ -58,6 +59,10 @@ public class ServerFacade {
 
         T result = gson.fromJson(isr, responseClass);
         return result;
+    }
+
+    public ClearResult clear() throws Exception {
+        return makeRequest("DELETE", "/db", null, null, ClearResult.class);
     }
 
     public RegisterResult register(String username, String password, String email) throws Exception {
