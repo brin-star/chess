@@ -15,6 +15,8 @@ import java.util.Map;
 public class ServerFacade {
     private String serverURL = null;
 
+    private record CreateGameBody(String gameName) {}
+
     public ServerFacade(int port) {
         serverURL = "http://localhost:" + port;
     }
@@ -75,13 +77,12 @@ public class ServerFacade {
     }
 
     public LogoutResult logout(String authToken) throws Exception {
-        LogoutRequest logoutRequest = new LogoutRequest(authToken);
-        return makeRequest("DELETE", "/session", logoutRequest, authToken, LogoutResult.class);
+        return makeRequest("DELETE", "/session", null, authToken, LogoutResult.class);
     }
 
     public CreateGameResult createGame(String authToken, String gameName) throws Exception {
-        CreateGameRequest createGameRequest = new CreateGameRequest(authToken, gameName);
-        return makeRequest("POST", "/game", createGameRequest, authToken, CreateGameResult.class);
+        CreateGameBody createGameBody = new CreateGameBody(gameName);
+        return makeRequest("POST", "/game", createGameBody, authToken, CreateGameResult.class);
     }
 
     public ListGamesResult listGames(String authToken) throws Exception {
