@@ -30,7 +30,13 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void positiveRegisterTest() throws Exception{
+    public void positiveClearTest() throws Exception {
+        facade.register("username", "password", "email@email.com");
+        Assertions.assertDoesNotThrow(() -> facade.clear());
+    }
+
+    @Test
+    public void positiveRegisterTest() throws Exception {
         var result = facade.register("username", "password", "email@email.com");
 
         Assertions.assertNotNull(result.authToken());
