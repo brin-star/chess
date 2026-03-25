@@ -8,9 +8,14 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 
 public class ServerFacade {
-    private String serverURL = "http://localhost:8080";
+    private String serverURL = null;
+
+    public ServerFacade(int port) {
+        serverURL = "http://localhost:" + port;
+    }
 
     private <T> T makeRequest(String method, String endpoint, Object requestBody, String authToken, Class<T> responseClass) throws Exception {
         var url = new URL(serverURL + endpoint);
@@ -40,7 +45,10 @@ public class ServerFacade {
 
         int responseCode = con.getResponseCode();
         if (responseCode != 200) {
-            throw new Exception(con.getErrorStream().toString());
+            InputStream err = con.getErrorStream();
+            InputStreamReader errISR = new InputStreamReader(err);
+            var errMsg = gson.fromJson(errISR, Map.class);
+            throw new Exception(errMsg.get("message").toString());
         }
 
         InputStream is = con.getInputStream();
