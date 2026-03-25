@@ -1,5 +1,6 @@
 package ServerFacade;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import result.*;
 
@@ -85,5 +86,10 @@ public class ServerFacade {
 
     public ListGamesResult listGames(String authToken) throws Exception {
         return makeRequest("GET", "/game", null, authToken, ListGamesResult.class);
+    }
+
+    public JoinGameResult joinGame(String authToken, int gameID, ChessGame.TeamColor playerColor) throws Exception {
+        JoinGameRequest joinGameRequest = new JoinGameRequest(authToken, gameID, playerColor);
+        return makeRequest("PUT", "/game", joinGameRequest, authToken, JoinGameResult.class);
     }
 }

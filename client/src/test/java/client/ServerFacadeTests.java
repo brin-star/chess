@@ -1,6 +1,7 @@
 package client;
 
 import ServerFacade.ServerFacade;
+import chess.ChessGame;
 import org.junit.jupiter.api.*;
 import server.Server;
 
@@ -114,6 +115,27 @@ public class ServerFacadeTests {
     public void negativeListGameTest() {
         Assertions.assertThrows(Exception.class, () -> {
             facade.listGames("nonexistent");
+        });
+    }
+
+    @Test
+    public void positiveJoinGameTest() throws Exception {
+        facade.register("username", "password", "email@email.com");
+        var session = facade.login("username", "password");
+        var game = facade.createGame(session.authToken(), "Game Name");
+
+        Assertions.assertDoesNotThrow(() -> {
+            facade.joinGame(session.authToken(), game.gameID(), ChessGame.TeamColor.WHITE);
+        });
+    }
+
+    @Test
+    public void negativeJoinGameTest() throws Exception {
+        facade.register("username", "password", "email@email.com");
+        var session = facade.login("username", "password");
+
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.joinGame(session.authToken(), 1, ChessGame.TeamColor.WHITE);
         });
     }
 }
