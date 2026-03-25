@@ -77,4 +77,13 @@ public class ServerFacade {
         LogoutRequest logoutRequest = new LogoutRequest(authToken);
         return makeRequest("DELETE", "/session", logoutRequest, authToken, LogoutResult.class);
     }
+
+    public CreateGameResult createGame(String authToken, String gameName) throws Exception {
+        CreateGameRequest createGameRequest = new CreateGameRequest(authToken, gameName);
+        return makeRequest("POST", "/game", createGameRequest, authToken, CreateGameResult.class);
+    }
+
+    public ListGamesResult listGames(String authToken) throws Exception {
+        return makeRequest("GET", "/game", null, authToken, ListGamesResult.class);
+    }
 }

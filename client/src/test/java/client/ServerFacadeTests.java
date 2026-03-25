@@ -78,9 +78,42 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void negativeLogoutTest() throws Exception {
+    public void negativeLogoutTest() {
         Assertions.assertThrows(Exception.class, () -> {
             facade.logout("nonexistant");
+        });
+    }
+
+    @Test
+    public void positiveCreateGameTest() throws Exception {
+        facade.register("username", "password", "email@email.com");
+        var session = facade.login("username", "password");
+        var result = facade.createGame(session.authToken(), "Game Name");
+
+        Assertions.assertNotNull(result.gameID());
+    }
+
+    @Test
+    public void negativeCreateGameTest() {
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.createGame("nonexistent", "Game Name");
+        });
+    }
+
+    @Test
+    public void positiveListGamesTest() throws Exception {
+        facade.register("username", "password", "email@email.com");
+        var session = facade.login("username", "password");
+        facade.createGame(session.authToken(), "Game Name");
+        var result = facade.listGames(session.authToken());
+
+        Assertions.assertTrue(result.games().size() == 1);
+    }
+
+    @Test
+    public void negativeListGameTest() {
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.listGames("nonexistent");
         });
     }
 }
