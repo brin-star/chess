@@ -1,6 +1,8 @@
 package ServerFacade;
 
 import com.google.gson.Gson;
+import result.RegisterRequest;
+import result.RegisterResult;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -56,5 +58,10 @@ public class ServerFacade {
 
         T result = gson.fromJson(isr, responseClass);
         return result;
+    }
+
+    public RegisterResult register(String username, String password, String email) throws Exception {
+        RegisterRequest registerRequest = new RegisterRequest(username, password, email);
+        return makeRequest("POST", "/user", registerRequest, null, RegisterResult.class);
     }
 }
