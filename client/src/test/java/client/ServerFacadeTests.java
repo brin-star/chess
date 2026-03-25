@@ -50,4 +50,20 @@ public class ServerFacadeTests {
             facade.register("username", "password", "email@email.com");
         });
     }
+
+    @Test
+    public void positiveLoginTest() throws Exception{
+        facade.register("username", "password", "email@email.com");
+        var result = facade.login("username", "password");
+
+        Assertions.assertNotNull(result.authToken());
+        Assertions.assertTrue(result.authToken().length() > 10);
+    }
+
+    @Test
+    public void negativeLoginTest() {
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.login("username", "password");
+        });
+    }
 }
