@@ -72,4 +72,9 @@ public class ServerFacade {
         LoginRequest loginRequest = new LoginRequest(username, password);
         return makeRequest("POST", "/session", loginRequest, null, LoginResult.class);
     }
+
+    public LogoutResult logout(String authToken) throws Exception {
+        LogoutRequest logoutRequest = new LogoutRequest(authToken);
+        return makeRequest("DELETE", "/session", logoutRequest, authToken, LogoutResult.class);
+    }
 }

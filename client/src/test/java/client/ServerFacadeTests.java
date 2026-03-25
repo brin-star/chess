@@ -52,7 +52,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void positiveLoginTest() throws Exception{
+    public void positiveLoginTest() throws Exception {
         facade.register("username", "password", "email@email.com");
         var result = facade.login("username", "password");
 
@@ -64,6 +64,23 @@ public class ServerFacadeTests {
     public void negativeLoginTest() {
         Assertions.assertThrows(Exception.class, () -> {
             facade.login("username", "password");
+        });
+    }
+
+    @Test
+    public void positiveLogoutTest() throws Exception {
+        facade.register("username", "password", "email@email.com");
+        var session = facade.login("username", "password");
+
+        Assertions.assertDoesNotThrow(() -> {
+            facade.logout(session.authToken());
+        });
+    }
+
+    @Test
+    public void negativeLogoutTest() throws Exception {
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.logout("nonexistant");
         });
     }
 }
