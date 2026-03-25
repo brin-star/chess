@@ -6,40 +6,50 @@ import java.util.Scanner;
 
 public class Repl {
     ServerFacade serverFacade;
-    Scanner scanner = System.in;
-    PreloginClient preloginClient(serverFacade);
-    PostloginClient postloginClient(serverFacade);
+    Scanner scanner;
+    PreloginClient preloginClient;
+    PostloginClient postloginClient;
     boolean isLoggedIn = false;
+
+    public Repl(ServerFacade serverFacade) {
+        this.serverFacade = serverFacade;
+        this.scanner = new Scanner(System.in);
+        this.preloginClient = new PreloginClient(serverFacade);
+        this.postloginClient = new PostloginClient(serverFacade);
+    }
 
     public void run() {
         System.out.println("Welcome to Chess! Type 'help' for more information.");
-        var result;
+        String result;
 
         while(true) {
             if (isLoggedIn) {
-                System.out.println("[LOGGED_IN]");
+                System.out.print("[LOGGED_IN] >>> ");
             }
             else {
-                System.out.println("[LOGGED_OUT]");
+                System.out.print("[LOGGED_OUT] >>> ");
             }
 
             String line = scanner.nextLine();
 
             if (isLoggedIn) {
-                result = PostloginClient.eval(line);
+                result = postloginClient.eval(line);
             }
             else {
-                result = PreloginClient.eval(line);
+                result = preloginClient.eval(line);
             }
 
-            if (result == "quit") {
+            if (result.equals("quit")) {
                 System.out.println("Goodbye!");
+                break;
             }
-            else if (result == "LOGIN_SUCCESS") {
+            else if (result.equals("LOGIN_SUCCESS")) {
                 isLoggedIn = true;
+                System.out.println("You are now logged in.");
             }
-            else if (result == "LOGOUT_SUCCESS") {
+            else if (result.equals("LOGOUT_SUCCESS")) {
                 isLoggedIn = false;
+                System.out.println("You are now logged out.");
             }
             else {
                 System.out.println(result);
