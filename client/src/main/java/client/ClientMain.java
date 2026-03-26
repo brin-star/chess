@@ -1,6 +1,6 @@
 package client;
 
-import ServerFacade.ServerFacade;
+import serverfacade.ServerFacade;
 import chess.*;
 import ui.Repl;
 

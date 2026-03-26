@@ -1,6 +1,6 @@
 package ui;
 
-import ServerFacade.ServerFacade;
+import serverfacade.ServerFacade;
 import chess.ChessGame;
 import model.GameData;
 
@@ -55,43 +55,7 @@ public class PostloginClient {
             }
         }
         else if (command.equals("list")) {
-            try {
-                var result = serverFacade.listGames(auth);
-                lastGamesList = result.games();
-
-                StringBuilder sb = new StringBuilder();
-
-                int counter = 1;
-
-                for (GameData game : lastGamesList) {
-                    String whitePlayerName = game.whiteUsername();
-                    String blackPlayerName = game.blackUsername();
-
-                    if (game.whiteUsername() == null) {
-                        whitePlayerName = "open";
-                    }
-
-                    if (game.blackUsername() == null) {
-                        blackPlayerName = "open";
-                    }
-
-                    String gameOutput = counter + ". GAME NAME: " + game.gameName() + ", WHITE PLAYER NAME: " + whitePlayerName
-                            + ", BLACK PLAYER NAME: " + blackPlayerName + "\n";
-
-                    sb.append(gameOutput);
-                    counter++;
-                }
-
-                if (sb.isEmpty()) {
-                    return "No games found.";
-                }
-                else {
-                    return sb.toString();
-                }
-            }
-            catch (Exception e) {
-                return "Error: " + e.getMessage();
-            }
+            return listCommand();
         }
         else if (command.equals("create")) {
             if (tokens.size() != 2) {
@@ -111,44 +75,7 @@ public class PostloginClient {
             }
         }
         else if (command.equals("play")) {
-            if (tokens.size() != 3) {
-                return """
-                       Please include all and only required information to play:
-                       play <gameNumber> <WHITE|BLACK>
-                       """;
-            }
-
-            try {
-                int gameNumber = Integer.parseInt(tokens.get(1));
-                int gameIndex = gameNumber - 1;
-
-                if (lastGamesList == null || lastGamesList.isEmpty()) {
-                    return "Please check available games first by running 'list.'";
-                }
-
-                GameData game = new ArrayList<>(lastGamesList).get(gameIndex);
-
-                int gameID = game.gameID();
-                String colorInput = tokens.get(2).toUpperCase();
-                ChessGame.TeamColor playerColor = ChessGame.TeamColor.valueOf(colorInput);
-
-                serverFacade.joinGame(auth, gameID, playerColor);
-
-                if (playerColor == ChessGame.TeamColor.WHITE) {
-                    drawBoard(ChessGame.TeamColor.WHITE);
-                }
-                else {
-                    drawBoard(ChessGame.TeamColor.BLACK);
-                }
-
-                return "Game joined successfully!";
-            }
-            catch (NumberFormatException e) {
-                return "Game number must be a number.";
-            }
-            catch (Exception e) {
-                return "Error: " + e.getMessage();
-            }
+            return playCommand(tokens);
         }
         else if (command.equals("observe")) {
             if (tokens.size() != 2) {
@@ -290,5 +217,86 @@ public class PostloginClient {
         sb.append("\n");
 
         System.out.print(sb);
+    }
+
+    public String listCommand() {
+        try {
+            var result = serverFacade.listGames(auth);
+            lastGamesList = result.games();
+
+            StringBuilder sb = new StringBuilder();
+
+            int counter = 1;
+
+            for (GameData game : lastGamesList) {
+                String whitePlayerName = game.whiteUsername();
+                String blackPlayerName = game.blackUsername();
+
+                if (game.whiteUsername() == null) {
+                    whitePlayerName = "open";
+                }
+
+                if (game.blackUsername() == null) {
+                    blackPlayerName = "open";
+                }
+
+                String gameOutput = counter + ". GAME NAME: " + game.gameName() + ", WHITE PLAYER NAME: " + whitePlayerName
+                        + ", BLACK PLAYER NAME: " + blackPlayerName + "\n";
+
+                sb.append(gameOutput);
+                counter++;
+            }
+
+            if (sb.isEmpty()) {
+                return "No games found.";
+            }
+            else {
+                return sb.toString();
+            }
+        }
+        catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    public String playCommand(List<String> tokens) {
+        if (tokens.size() != 3) {
+            return """
+                       Please include all and only required information to play:
+                       play <gameNumber> <WHITE|BLACK>
+                       """;
+        }
+
+        try {
+            int gameNumber = Integer.parseInt(tokens.get(1));
+            int gameIndex = gameNumber - 1;
+
+            if (lastGamesList == null || lastGamesList.isEmpty()) {
+                return "Please check available games first by running 'list.'";
+            }
+
+            GameData game = new ArrayList<>(lastGamesList).get(gameIndex);
+
+            int gameID = game.gameID();
+            String colorInput = tokens.get(2).toUpperCase();
+            ChessGame.TeamColor playerColor = ChessGame.TeamColor.valueOf(colorInput);
+
+            serverFacade.joinGame(auth, gameID, playerColor);
+
+            if (playerColor == ChessGame.TeamColor.WHITE) {
+                drawBoard(ChessGame.TeamColor.WHITE);
+            }
+            else {
+                drawBoard(ChessGame.TeamColor.BLACK);
+            }
+
+            return "Game joined successfully!";
+        }
+        catch (NumberFormatException e) {
+            return "Game number must be a number.";
+        }
+        catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
     }
 }
