@@ -30,7 +30,6 @@ public class PostloginClient {
         }
 
         List<String> tokens = Arrays.stream(line.trim().split("\\s+")).collect(Collectors.toList());
-
         String command = tokens.get(0).toLowerCase();
 
         if (command.equals("help")) {
@@ -47,7 +46,6 @@ public class PostloginClient {
         else if (command.equals("logout")) {
             try {
                 serverFacade.logout(auth);
-
                 return "LOGOUT_SUCCESS";
             }
             catch (Exception e) {
@@ -67,7 +65,6 @@ public class PostloginClient {
 
             try {
                 serverFacade.createGame(auth, tokens.get(1));
-
                 return "Game created successfully!";
             }
             catch (Exception e) {
@@ -94,11 +91,9 @@ public class PostloginClient {
                 }
 
                 GameData game = new ArrayList<>(lastGamesList).get(gameIndex);
-
                 int gameID = game.gameID();
 
                 drawBoard(ChessGame.TeamColor.WHITE);
-
                 return "Now observing game: " + game.gameName();
             }
             catch (NumberFormatException e) {
