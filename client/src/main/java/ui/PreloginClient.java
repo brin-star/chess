@@ -15,13 +15,13 @@ public class PreloginClient {
     }
 
     public String eval(String line) {
-        List<String> tokens = Arrays.stream(line.trim().split("\\s+")).collect(Collectors.toList());
-
-        String command = tokens.get(0).toLowerCase();
-
         if (line == null || line.isBlank()) {
             return "";
         }
+
+        List<String> tokens = Arrays.stream(line.trim().split("\\s+")).collect(Collectors.toList());
+
+        String command = tokens.get(0).toLowerCase();
 
         if (command.equals("help")) {
             return """
