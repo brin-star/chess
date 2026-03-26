@@ -129,9 +129,18 @@ public class PostloginClient {
                 GameData game = new ArrayList<>(lastGamesList).get(gameIndex);
 
                 int gameID = game.gameID();
-                ChessGame.TeamColor playerColor = ChessGame.TeamColor.valueOf(tokens.get(2));
+                String colorInput = tokens.get(2).toUpperCase();
+                ChessGame.TeamColor playerColor = ChessGame.TeamColor.valueOf(colorInput);
 
                 serverFacade.joinGame(auth, gameID, playerColor);
+
+                if (playerColor == ChessGame.TeamColor.WHITE) {
+                    drawBoard(ChessGame.TeamColor.WHITE);
+                }
+                else {
+                    drawBoard(ChessGame.TeamColor.BLACK);
+                }
+
                 return "Game joined successfully!";
             }
             catch (NumberFormatException e) {
@@ -160,6 +169,8 @@ public class PostloginClient {
                 GameData game = new ArrayList<>(lastGamesList).get(gameIndex);
 
                 int gameID = game.gameID();
+
+                drawBoard(ChessGame.TeamColor.WHITE);
 
                 return "Now observing game: " + game.gameName();
             }
@@ -208,8 +219,8 @@ public class PostloginClient {
             column = List.of("a", "b", "c", "d", "e", "f", "g", "h");
             chessPieces = List.of("R", "N", "B", "Q", "K", "B", "N", "R");
             startRow = 8;
-            pieceColor = 37;
-            enemyColor = 30;
+            pieceColor = 30;
+            enemyColor = 31;
         }
         else {
             row = List.of(1, 2, 3, 4, 5, 6, 7, 8);
