@@ -19,6 +19,10 @@ public class PreloginClient {
 
         String command = tokens.get(0).toLowerCase();
 
+        if (line == null || line.isBlank()) {
+            return "";
+        }
+
         if (command.equals("help")) {
             return """
                    help                                    :show this message
