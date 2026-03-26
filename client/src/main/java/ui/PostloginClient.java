@@ -9,4 +9,7 @@ public class PostloginClient {
     public String eval(String line) {
         return "";
     }
+
+    public void setAuthToken(String authToken) {
+    }
 }

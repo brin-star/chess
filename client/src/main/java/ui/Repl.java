@@ -43,9 +43,11 @@ public class Repl {
                 System.out.println("Goodbye!");
                 break;
             }
-            else if (result.equals("LOGIN_SUCCESS")) {
+            else if (result.contains("LOGIN_SUCCESS")) {
+                String authToken = result.split(":")[1];
                 isLoggedIn = true;
                 System.out.println("You are now logged in.");
+                postloginClient.setAuthToken(authToken);
             }
             else if (result.equals("LOGOUT_SUCCESS")) {
                 isLoggedIn = false;
