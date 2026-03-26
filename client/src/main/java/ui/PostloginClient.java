@@ -96,7 +96,7 @@ public class PostloginClient {
         else if (command.equals("create")) {
             if (tokens.size() != 2) {
                 return """
-                       Please include all and only required information to login:
+                       Please include all and only required information to create:
                        create <gameName>
                        """;
             }
@@ -113,7 +113,7 @@ public class PostloginClient {
         else if (command.equals("play")) {
             if (tokens.size() != 3) {
                 return """
-                       Please include all and only required information to login:
+                       Please include all and only required information to play:
                        play <gameNumber> <WHITE|BLACK>
                        """;
             }
@@ -122,7 +122,7 @@ public class PostloginClient {
                 int gameNumber = Integer.parseInt(tokens.get(1));
                 int gameIndex = gameNumber - 1;
 
-                if (lastGamesList.isEmpty() || lastGamesList == null) {
+                if (lastGamesList == null || lastGamesList.isEmpty()) {
                     return "Please check available games first by running 'list.'";
                 }
 
@@ -142,7 +142,36 @@ public class PostloginClient {
             }
         }
         else if (command.equals("observe")) {
-            return "Coming soon!";
+            if (tokens.size() != 2) {
+                return """
+                       Please include all and only required information to observe:
+                       observe <gameNumber>
+                       """;
+            }
+
+            try {
+                int gameNumber = Integer.parseInt(tokens.get(1));
+                int gameIndex = gameNumber - 1;
+
+                if (lastGamesList == null || lastGamesList.isEmpty()) {
+                    return "Please check available games first by running 'list.'";
+                }
+
+                GameData game = new ArrayList<>(lastGamesList).get(gameIndex);
+
+                int gameID = game.gameID();
+
+                return "Now observing game: " + game.gameName();
+            }
+            catch (NumberFormatException e) {
+                return "Game number must be a number.";
+            }
+            catch (IndexOutOfBoundsException e) {
+                return "Game number out of range.";
+            }
+            catch (Exception e) {
+                return "Error: " + e.getMessage();
+            }
         }
         else if (command.equals("quit")) {
             return "quit";
@@ -161,4 +190,6 @@ public class PostloginClient {
                    """;
         }
     }
+
+
 }
