@@ -1,6 +1,7 @@
 package ui;
 
 import ServerFacade.ServerFacade;
+import chess.ChessGame;
 
 import java.util.Scanner;
 

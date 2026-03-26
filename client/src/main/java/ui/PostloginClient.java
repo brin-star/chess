@@ -199,14 +199,17 @@ public class PostloginClient {
         int startRow;
         int pieceColor;
         int enemyColor;
+        int background;
+        int textColor;
+        String text;
 
         if (boardPerspective == ChessGame.TeamColor.WHITE) {
             row = List.of(8, 7, 6, 5, 4, 3, 2, 1);
             column = List.of("a", "b", "c", "d", "e", "f", "g", "h");
             chessPieces = List.of("R", "N", "B", "Q", "K", "B", "N", "R");
             startRow = 8;
-            pieceColor = 34;
-            enemyColor = 31;
+            pieceColor = 37;
+            enemyColor = 30;
         }
         else {
             row = List.of(1, 2, 3, 4, 5, 6, 7, 8);
@@ -214,7 +217,7 @@ public class PostloginClient {
             chessPieces = List.of("R", "N", "B", "K", "Q", "B", "N", "R");
             startRow = 1;
             pieceColor = 31;
-            enemyColor = 34;
+            enemyColor = 30;
         }
 
         // Top boarder row
@@ -228,43 +231,53 @@ public class PostloginClient {
         // Rows of Chess Board
         for (int i = 0; i < row.size(); i++) {
             sb.append(" " + row.get(i) + " ");
+
             for (int k = 0; k < column.size(); k++) {
-                if (i == 7 || i == 6 || i == 1 || i == 0) {
-                    if ((i + k) % 2 != 0) {
-                        // White background
-                        if (startRow == 8 || startRow == 1 && i == 0) {
-                            sb.append("\u001b[" + pieceColor + ";107;1m " + chessPieces.get(k) + " ");
-                        } else if (i == 1 || i == 6) {
-                            if (pieceColor == 34 && i == 1) {
-                                sb.append("\u001b[" + pieceColor + ";107;1m P ");
-                            } else {
-                                sb.append("\u001b[" + enemyColor + ";107;1m P ");
-                            }
-                        }
-                    } else {
-                        // Black background
-                        if (startRow == 8 || startRow == 1 && i == 7) {
-                            sb.append("\u001b[" + pieceColor + ";40;1m " + chessPieces.get(k) + " ");
-                        } else if (i == 1 || i == 6) {
-                            if (pieceColor == 31 && i == 1) {
-                                sb.append("\u001b[" + pieceColor + ";40;1m P ");
-                            } else {
-                                sb.append("\u001b[" + enemyColor + ";40;1m P ");
-                            }
-                        }
-                    }
-                } else {
-                    if ((i + k) % 2 != 0) {
-                        // White background
-                        sb.append("\u001b[;107;1m   ");
-                    } else {
-                        // Black background
-                        sb.append("\u001b[;40;1m   ");
-                    }
+                // Determine background color
+                if ((i + k) % 2 != 0) {
+                    background = 47;
                 }
+                else {
+                    background = 105;
+                }
+
+                // Determine the piece and piece color
+                if (i == 0) {
+                    text = chessPieces.get(k);
+                    textColor = pieceColor;
+                }
+                else if (i == 1) {
+                    text = "P";
+                    textColor = pieceColor;
+                }
+                else if (i == 7) {
+                    text = chessPieces.get(k);
+                    textColor = enemyColor;
+                }
+                else if (i == 6) {
+                    text = "P";
+                    textColor = enemyColor;
+                }
+                else {
+                    text = " ";
+                    textColor = 0;
+                }
+
+                sb.append("\u001b[" + textColor + ";" + background + ";1m " + text + " \u001b[0m");
             }
+
             sb.append(" " + row.get(i) + " ");
             sb.append("\n");
         }
+
+        // bottom boarder row
+        sb.append("   ");
+        for (int i = 0; i < column.size(); i++) {
+            sb.append(" " + column.get(i) + " ");
+        }
+        sb.append("   ");
+        sb.append("\n");
+
+        System.out.print(sb);
     }
 }
