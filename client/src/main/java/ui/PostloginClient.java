@@ -1,6 +1,7 @@
 package ui;
 
 import ServerFacade.ServerFacade;
+import chess.ChessGame;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -110,7 +111,35 @@ public class PostloginClient {
             }
         }
         else if (command.equals("play")) {
-            return "Coming soon!";
+            if (tokens.size() != 3) {
+                return """
+                       Please include all and only required information to login:
+                       play <gameNumber> <WHITE|BLACK>
+                       """;
+            }
+
+            try {
+                int gameNumber = Integer.parseInt(tokens.get(1));
+                int gameIndex = gameNumber - 1;
+
+                if (lastGamesList.isEmpty() || lastGamesList == null) {
+                    return "Please check available games first by running 'list.'";
+                }
+
+                GameData game = new ArrayList<>(lastGamesList).get(gameIndex);
+
+                int gameID = game.gameID();
+                ChessGame.TeamColor playerColor = ChessGame.TeamColor.valueOf(tokens.get(2));
+
+                serverFacade.joinGame(auth, gameID, playerColor);
+                return "Game joined successfully!";
+            }
+            catch (NumberFormatException e) {
+                return "Game number must be a number.";
+            }
+            catch (Exception e) {
+                return "Error: " + e.getMessage();
+            }
         }
         else if (command.equals("observe")) {
             return "Coming soon!";
