@@ -34,7 +34,7 @@ public class PreloginClient {
         else if (command.equals("register")) {
             if (tokens.size() != 4) {
                 return """
-                       Please include all required information to register:
+                       Please include all and only required information to register:
                        register <username> <password> <email>
                        """;
             }
@@ -51,7 +51,7 @@ public class PreloginClient {
         else if (command.equals("login")) {
             if (tokens.size() != 3) {
                 return """
-                       Please include all required information to login:
+                       Please include all and only required information to login:
                        login <username> <password>
                        """;
             }
