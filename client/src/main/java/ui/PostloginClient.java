@@ -191,5 +191,80 @@ public class PostloginClient {
         }
     }
 
+    public void drawBoard(ChessGame.TeamColor boardPerspective) {
+        StringBuilder sb = new StringBuilder();
+        List<Integer> row;
+        List<String> column;
+        List<String> chessPieces;
+        int startRow;
+        int pieceColor;
+        int enemyColor;
 
+        if (boardPerspective == ChessGame.TeamColor.WHITE) {
+            row = List.of(8, 7, 6, 5, 4, 3, 2, 1);
+            column = List.of("a", "b", "c", "d", "e", "f", "g", "h");
+            chessPieces = List.of("R", "N", "B", "Q", "K", "B", "N", "R");
+            startRow = 8;
+            pieceColor = 34;
+            enemyColor = 31;
+        }
+        else {
+            row = List.of(1, 2, 3, 4, 5, 6, 7, 8);
+            column = List.of("h", "g", "f", "e", "d", "c", "b", "a");
+            chessPieces = List.of("R", "N", "B", "K", "Q", "B", "N", "R");
+            startRow = 1;
+            pieceColor = 31;
+            enemyColor = 34;
+        }
+
+        // Top boarder row
+        sb.append("   ");
+        for (int i = 0; i < column.size(); i++) {
+            sb.append(" " + column.get(i) + " ");
+        }
+        sb.append("   ");
+        sb.append("\n");
+
+        // Rows of Chess Board
+        for (int i = 0; i < row.size(); i++) {
+            sb.append(" " + row.get(i) + " ");
+            for (int k = 0; k < column.size(); k++) {
+                if (i == 7 || i == 6 || i == 1 || i == 0) {
+                    if ((i + k) % 2 != 0) {
+                        // White background
+                        if (startRow == 8 || startRow == 1 && i == 0) {
+                            sb.append("\u001b[" + pieceColor + ";107;1m " + chessPieces.get(k) + " ");
+                        } else if (i == 1 || i == 6) {
+                            if (pieceColor == 34 && i == 1) {
+                                sb.append("\u001b[" + pieceColor + ";107;1m P ");
+                            } else {
+                                sb.append("\u001b[" + enemyColor + ";107;1m P ");
+                            }
+                        }
+                    } else {
+                        // Black background
+                        if (startRow == 8 || startRow == 1 && i == 7) {
+                            sb.append("\u001b[" + pieceColor + ";40;1m " + chessPieces.get(k) + " ");
+                        } else if (i == 1 || i == 6) {
+                            if (pieceColor == 31 && i == 1) {
+                                sb.append("\u001b[" + pieceColor + ";40;1m P ");
+                            } else {
+                                sb.append("\u001b[" + enemyColor + ";40;1m P ");
+                            }
+                        }
+                    }
+                } else {
+                    if ((i + k) % 2 != 0) {
+                        // White background
+                        sb.append("\u001b[;107;1m   ");
+                    } else {
+                        // Black background
+                        sb.append("\u001b[;40;1m   ");
+                    }
+                }
+            }
+            sb.append(" " + row.get(i) + " ");
+            sb.append("\n");
+        }
+    }
 }
