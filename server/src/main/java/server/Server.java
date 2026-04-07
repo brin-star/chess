@@ -60,6 +60,14 @@ public class Server {
         JoinGameHandler joinGameHandler = new JoinGameHandler(joinGameService);
         javalin.put("/game", joinGameHandler::updateGame);
 
+        // Websocket endpoint
+        WebSocketHandler wsHandler = new WebSocketHandler(authDAO, gameDAO);
+        javalin.ws("/ws", ws -> {
+           ws.onMessage(wsHandler::onMessage);
+           ws.onConnect(wsHandler::onConnect);
+           ws.onClose(wsHandler::onClose);
+        });
+
     }
 
     public int run(int desiredPort) {
