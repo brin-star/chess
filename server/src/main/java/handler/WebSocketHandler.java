@@ -6,15 +6,18 @@ import dataaccess.GameDAO;
 import io.javalin.websocket.WsCloseContext;
 import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsMessageContext;
+import websocket.ConnectionManager;
 import websocket.commands.UserGameCommand;
 
 public class WebSocketHandler {
     private final AuthDAO authDAO;
     private final GameDAO gameDAO;
+    private final ConnectionManager connectionManager;
 
-    public WebSocketHandler(AuthDAO authDAO, GameDAO gameDAO) {
+    public WebSocketHandler(AuthDAO authDAO, GameDAO gameDAO, ConnectionManager connectionManager) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
+        this.connectionManager = connectionManager;
     }
 
     public void onMessage(WsMessageContext wsMessageContext) {
