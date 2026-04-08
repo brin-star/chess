@@ -19,7 +19,12 @@ public class ConnectionManager {
     }
 
     public void remove(Session session) {
-
+        for (Set<Session> set : sessions.values()) {
+            if (set.contains(session)) {
+                set.remove(session);
+                break;
+            }
+        }
     }
 
     public void broadcastToAll(int gameID, String message) {
