@@ -2,6 +2,7 @@ package websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
 
+import java.io.IOException;
 import java.util.*;
 
 public class ConnectionManager {
@@ -31,16 +32,33 @@ public class ConnectionManager {
         Set<Session> set = sessions.get(gameID);
         if (set != null) {
             for (Session session : set) {
-                sendToOne(session, message);
+                try {
+                    sendToOne(session, message);
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
     public void broadcastToAllExcept(int gameID, Session excludedSession, String message) {
-
+        Set<Session> set = sessions.get(gameID);
+        if (set != null) {
+            for (Session session : set) {
+                if (session != excludedSession) {
+                    try {
+                        sendToOne(session, message);
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 
-    public void sendToOne(Session session, String message) {
-
+    public void sendToOne(Session session, String message) throws IOException {
+        session.getRemote().sendString(message);
     }
 }
