@@ -28,7 +28,12 @@ public class ConnectionManager {
     }
 
     public void broadcastToAll(int gameID, String message) {
-
+        Set<Session> set = sessions.get(gameID);
+        if (set != null) {
+            for (Session session : set) {
+                sendToOne(session, message);
+            }
+        }
     }
 
     public void broadcastToAllExcept(int gameID, Session excludedSession, String message) {
