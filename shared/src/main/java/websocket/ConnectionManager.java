@@ -2,19 +2,20 @@ package websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ConnectionManager {
-    private Map<Integer, Set<Session>> sessions = new HashMap<>();
+    private Map<Integer, Set<Session>> sessions;
 
-    public ConnectionManager(Map<Integer, Set<Session>> sessions) {
-        this.sessions = sessions;
+    public ConnectionManager() {
+        sessions = new HashMap<>();
     }
 
     public void add(int gameID, Session session) {
-        sessions.put(gameID, session);
+        if (!sessions.containsKey(gameID)) {
+            sessions.put(gameID, new HashSet<>());
+        }
+        sessions.get(gameID).add(session);
     }
 
     public void remove(Session session) {
