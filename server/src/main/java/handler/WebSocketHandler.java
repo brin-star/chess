@@ -6,7 +6,7 @@ import dataaccess.GameDAO;
 import io.javalin.websocket.WsCloseContext;
 import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsMessageContext;
-import websocket.ConnectionManager;
+import server.ConnectionManager;
 import websocket.commands.UserGameCommand;
 
 public class WebSocketHandler {
@@ -41,7 +41,7 @@ public class WebSocketHandler {
     }
 
     private void handleConnect(UserGameCommand userGameCommand) {
-        connectionManager.add(base, wsMessageContext.session);
+
     }
 
     private void handleMakeMove(MakeMoveCommand makeMoveCommand) {
