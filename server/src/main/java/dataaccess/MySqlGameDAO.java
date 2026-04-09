@@ -120,6 +120,23 @@ public class MySqlGameDAO implements GameDAO{
         }
     }
 
+    public void updateGameInDB(GameData gameData) throws DataAccessException {
+        try (var conn = getConnection()) {
+            String statement = "UPDATE games SET gameState=? WHERE gameID=?";
+            String gameJson = new Gson().toJson(gameData.game());
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, gameJson);
+                ps.setInt(2, gameData.gameID());
+                int rowsAffected = ps.executeUpdate();
+                if (rowsAffected == 0) {
+                    throw new DataAccessException("No games were updated");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to update game: " + e.getMessage());
+        }
+    }
+
     public void clear() throws DataAccessException {
         try (var conn = getConnection()) {
             var statement = "TRUNCATE games";
