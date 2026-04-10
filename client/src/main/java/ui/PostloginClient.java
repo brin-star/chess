@@ -30,7 +30,6 @@ public class PostloginClient {
         if (line == null || line.isBlank()) {
             return "";
         }
-
         List<String> tokens = Arrays.stream(line.trim().split("\\s+")).collect(Collectors.toList());
         String command = tokens.get(0).toLowerCase();
 
@@ -91,7 +90,6 @@ public class PostloginClient {
                 if (lastGamesList == null || lastGamesList.isEmpty()) {
                     return "Please check available games first by running 'list.'";
                 }
-
                 GameData game = new ArrayList<>(lastGamesList).get(gameIndex);
                 int gameID = game.gameID();
 
