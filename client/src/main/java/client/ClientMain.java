@@ -9,7 +9,7 @@ public class ClientMain {
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         System.out.println("♕ 240 Chess Client: " + piece);
 
-        ServerFacade serverFacade = new ServerFacade(8080);
+        ServerFacade serverFacade = new ServerFacade(8080, null);
         Repl repl = new Repl(serverFacade);
         repl.run();
     }

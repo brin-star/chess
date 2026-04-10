@@ -1,24 +1,31 @@
 package serverfacade;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
+import jakarta.websocket.DeploymentException;
 import result.*;
+import websocket.ServerMessageObserver;
+import websocket.WebsocketCommunicator;
+import websocket.commands.MakeMoveCommand;
+import websocket.commands.UserGameCommand;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 
 public class ServerFacade {
     private String serverURL = null;
+    private ServerMessageObserver observer;
+    private WebsocketCommunicator ws = null;
 
     private record CreateGameBody(String gameName) {}
 
-    public ServerFacade(int port) {
+    public ServerFacade(int port, ServerMessageObserver observer) {
         serverURL = "http://localhost:" + port;
+        this.observer = observer;
     }
 
     private <T> T makeRequest(String method, String endpoint, Object requestBody, String authToken, Class<T> responseClass) throws Exception {
@@ -92,5 +99,28 @@ public class ServerFacade {
     public JoinGameResult joinGame(String authToken, int gameID, ChessGame.TeamColor playerColor) throws Exception {
         JoinGameRequest joinGameRequest = new JoinGameRequest(authToken, gameID, playerColor);
         return makeRequest("PUT", "/game", joinGameRequest, authToken, JoinGameResult.class);
+    }
+
+    // Websocket functions
+    public void connectToGame(String authToken, int gameID) throws IOException, DeploymentException, URISyntaxException {
+        String wsURL = serverURL.replace("http", "ws");
+        this.ws = new WebsocketCommunicator(wsURL, observer);
+        UserGameCommand cmd = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+        ws.send(new Gson().toJson(cmd));
+    }
+
+    public void makeMove(String authToken, int gameID, ChessMove move) throws IOException {
+        MakeMoveCommand cmd = new MakeMoveCommand(authToken, gameID, move);
+        ws.send(new Gson().toJson(cmd));
+    }
+
+    public void leaveGame(String authToken, int gameID) throws IOException {
+        UserGameCommand cmd = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+        ws.send(new Gson().toJson(cmd));
+    }
+
+    public void resignGame(String authToken, int gameID) throws IOException {
+        UserGameCommand cmd = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+        ws.send(new Gson().toJson(cmd));
     }
 }
