@@ -10,8 +10,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ui.BoardDrawer.draw;
-
 public class PostloginClient {
 
     private final ServerFacade serverFacade;
@@ -125,10 +123,6 @@ public class PostloginClient {
                    quit                                    :exit the program
                    """;
         }
-    }
-
-    public void drawBoard(ChessGame.TeamColor boardPerspective) {
-        draw(new ChessGame(), boardPerspective);
     }
 
     public String listCommand() {
