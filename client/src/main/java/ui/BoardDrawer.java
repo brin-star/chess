@@ -11,11 +11,12 @@ public class BoardDrawer {
         drawWithHighlights(currentGame, playerColor, null, null);
     }
 
-    public static void drawWithHighlights(ChessGame currentGame, ChessGame.TeamColor playerColor, Collection<ChessMove> validMoves, ChessPosition startPosition) {
+    public static void drawWithHighlights(ChessGame currentGame, ChessGame.TeamColor playerColor,
+                                          Collection<ChessMove> validMoves, ChessPosition startPosition) {
         StringBuilder sb = new StringBuilder();
         List<Integer> row;
         List<String> column;
-        int background;
+        int background = 0;
         int textColor;
         String text;
 
@@ -46,35 +47,7 @@ public class BoardDrawer {
                 ChessPiece piece = currentGame.getBoard().getPiece(position);
 
                 // Determine background color
-                if (validMoves != null) {
-                    if (startPosition.equals(position)) {
-                        background = 43;
-                    }
-                    else if (validMoves.stream().anyMatch(move -> move.getEndPosition().equals(position))) {
-                        if ((i + k) % 2 != 0) {
-                            background = 46;
-                        }
-                        else {
-                            background = 104;
-                        }
-                    }
-                    else {
-                        if ((i + k) % 2 != 0) {
-                            background = 47;
-                        }
-                        else {
-                            background = 105;
-                        }
-                    }
-                }
-                else {
-                    if ((i + k) % 2 != 0) {
-                        background = 47;
-                    }
-                    else {
-                        background = 105;
-                    }
-                }
+                assignBackground(validMoves, position, startPosition, background, i, k);
 
                 // Determine the piece and piece color
                 if (piece == null) {
@@ -127,5 +100,37 @@ public class BoardDrawer {
         }
 
         return letter;
+    }
+
+    private static void assignBackground(Collection<ChessMove> validMoves, ChessPosition position, ChessPosition startPosition, int background, int i, int k) {
+        if (validMoves != null) {
+            if (startPosition.equals(position)) {
+                background = 43;
+            }
+            else if (validMoves.stream().anyMatch(move -> move.getEndPosition().equals(position))) {
+                if ((i + k) % 2 != 0) {
+                    background = 46;
+                }
+                else {
+                    background = 104;
+                }
+            }
+            else {
+                if ((i + k) % 2 != 0) {
+                    background = 47;
+                }
+                else {
+                    background = 105;
+                }
+            }
+        }
+        else {
+            if ((i + k) % 2 != 0) {
+                background = 47;
+            }
+            else {
+                background = 105;
+            }
+        }
     }
 }
