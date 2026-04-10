@@ -184,7 +184,46 @@ public class WebSocketHandler {
     }
 
     private void handleLeave(UserGameCommand userGameCommand, WsMessageContext wsMessageContext) {
+        try {
+            AuthData authData = authDAO.getAuth(userGameCommand.getAuthToken());
+            GameData gameData = gameDAO.getGame(userGameCommand.getGameID());
 
+            if (authData == null) {
+                String errorJson = new Gson().toJson(new ErrorMessage("Error: unauthorized"));
+                connectionManager.sendToOne(wsMessageContext.session, errorJson);
+                return;
+            }
+
+            if (gameData == null ) {
+                String errorJson = new Gson().toJson(new ErrorMessage("Error: no game found"));
+                connectionManager.sendToOne(wsMessageContext.session, errorJson);
+                return;
+            }
+
+            if (authData.username().equals(gameData.whiteUsername())) {
+                gameDAO.updateGameInDB(new GameData(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(), gameData.game()));
+            }
+            else if (authData.username().equals(gameData.blackUsername())) {
+                gameDAO.updateGameInDB(new GameData(gameData.gameID(), gameData.whiteUsername(), null, gameData.gameName(), gameData.game()));
+            }
+
+            connectionManager.remove(wsMessageContext.session);
+
+            String messageToSend = new Gson().toJson(new NotificationMessage(authData.username() + " left the game"));
+            connectionManager.broadcastToAllExcept(userGameCommand.getGameID(), wsMessageContext.session, messageToSend);
+
+        }
+        catch (DataAccessException e) {
+            String errorJson = new Gson().toJson(new ErrorMessage("Error: " + e.getMessage()));
+            try {
+                connectionManager.sendToOne(wsMessageContext.session, errorJson);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void handleResign(UserGameCommand userGameCommand, WsMessageContext wsMessageContext) {
@@ -229,7 +268,8 @@ public class WebSocketHandler {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
