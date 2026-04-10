@@ -1,9 +1,6 @@
 package ui;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -51,10 +48,15 @@ public class BoardDrawer {
                 // Determine background color
                 if (validMoves != null) {
                     if (startPosition.equals(position)) {
-                        background = 226;
+                        background = 43;
                     }
                     else if (validMoves.stream().anyMatch(move -> move.getEndPosition().equals(position))) {
-                        background = 46;
+                        if ((i + k) % 2 != 0) {
+                            background = 46;
+                        }
+                        else {
+                            background = 104;
+                        }
                     }
                     else {
                         if ((i + k) % 2 != 0) {
