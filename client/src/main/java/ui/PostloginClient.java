@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ui.BoardDrawer.draw;
+
 public class PostloginClient {
 
     private final ServerFacade serverFacade;
@@ -125,93 +127,7 @@ public class PostloginClient {
     }
 
     public void drawBoard(ChessGame.TeamColor boardPerspective) {
-        StringBuilder sb = new StringBuilder();
-        List<Integer> row;
-        List<String> column;
-        List<String> chessPieces;
-        int startRow;
-        int pieceColor;
-        int enemyColor;
-        int background;
-        int textColor;
-        String text;
-
-        if (boardPerspective == ChessGame.TeamColor.WHITE) {
-            row = List.of(8, 7, 6, 5, 4, 3, 2, 1);
-            column = List.of("a", "b", "c", "d", "e", "f", "g", "h");
-            chessPieces = List.of("R", "N", "B", "Q", "K", "B", "N", "R");
-            startRow = 8;
-            pieceColor = 30;
-            enemyColor = 31;
-        }
-        else {
-            row = List.of(1, 2, 3, 4, 5, 6, 7, 8);
-            column = List.of("h", "g", "f", "e", "d", "c", "b", "a");
-            chessPieces = List.of("R", "N", "B", "K", "Q", "B", "N", "R");
-            startRow = 1;
-            pieceColor = 31;
-            enemyColor = 30;
-        }
-
-        // Top boarder row
-        sb.append("   ");
-        for (int i = 0; i < column.size(); i++) {
-            sb.append(" " + column.get(i) + " ");
-        }
-        sb.append("   ");
-        sb.append("\n");
-
-        // Rows of Chess Board
-        for (int i = 0; i < row.size(); i++) {
-            sb.append(" " + row.get(i) + " ");
-
-            for (int k = 0; k < column.size(); k++) {
-                // Determine background color
-                if ((i + k) % 2 != 0) {
-                    background = 47;
-                }
-                else {
-                    background = 105;
-                }
-
-                // Determine the piece and piece color
-                if (i == 0) {
-                    text = chessPieces.get(k);
-                    textColor = pieceColor;
-                }
-                else if (i == 1) {
-                    text = "P";
-                    textColor = pieceColor;
-                }
-                else if (i == 7) {
-                    text = chessPieces.get(k);
-                    textColor = enemyColor;
-                }
-                else if (i == 6) {
-                    text = "P";
-                    textColor = enemyColor;
-                }
-                else {
-                    text = " ";
-                    textColor = 0;
-                }
-
-                sb.append("\u001b[" + textColor + ";" + background + ";1m " + text + " \u001b[0m");
-            }
-
-            sb.append(" " + row.get(i) + " ");
-            sb.append("\n");
-        }
-
-        // bottom boarder row
-        sb.append("   ");
-        for (int i = 0; i < column.size(); i++) {
-            sb.append(" " + column.get(i) + " ");
-        }
-        sb.append("   ");
-        sb.append("\n");
-
-        System.out.print(sb);
+        draw(new ChessGame(), boardPerspective);
     }
 
     public String listCommand() {

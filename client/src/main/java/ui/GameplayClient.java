@@ -41,7 +41,7 @@ public class GameplayClient implements ServerMessageObserver {
 
     private void handleLoadGame(LoadGameMessage message) {
         this.currentGame = message.getGame().game();
-        drawBoard(currentGame, playerColor);
+        BoardDrawer.draw(currentGame, playerColor);
     }
 
     private void handleError(ErrorMessage message) {
@@ -70,7 +70,7 @@ public class GameplayClient implements ServerMessageObserver {
     public String eval(String input) {
         return switch (input.toLowerCase()) {
             case "help" -> helpText();
-            case "redraw" -> { drawBoard(currentGame, playerColor); yield ""; }
+            case "redraw" -> { BoardDrawer.draw(currentGame, playerColor); yield ""; }
             case "move" -> { promptAndMakeMove(); yield ""; }
             case "resign" -> { promptAndResign(); yield ""; }
             case "highlight" -> { promptAndHighlight(); yield ""; }
@@ -158,6 +158,6 @@ public class GameplayClient implements ServerMessageObserver {
         int col = colNum - 'a' + 1;
         ChessPosition position = new ChessPosition(row, col);
         var validMoves = currentGame.validMoves(position);
-        drawBoard(currentGame, playerColor, validMoves, position);
+        BoardDrawer.drawWithHighlights(currentGame, playerColor, validMoves, position);
     }
 }
