@@ -61,7 +61,8 @@ public class Server {
         javalin.put("/game", joinGameHandler::updateGame);
 
         // Websocket endpoint
-        WebSocketHandler wsHandler = new WebSocketHandler(authDAO, gameDAO);
+        ConnectionManager connectionManager = new ConnectionManager();
+        WebSocketHandler wsHandler = new WebSocketHandler(authDAO, gameDAO, connectionManager);
         javalin.ws("/ws", ws -> {
            ws.onMessage(wsHandler::onMessage);
            ws.onConnect(wsHandler::onConnect);
