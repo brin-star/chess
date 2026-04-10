@@ -23,7 +23,22 @@ public class Server {
             throw new RuntimeException("Failed to initialize DAOs: " + e.getMessage());
         }
 
-        javalin = Javalin.create(config -> config.staticFiles.add("web"));
+        // Websocket endpoint
+        ConnectionManager connectionManager = new ConnectionManager();
+        WebSocketHandler wsHandler = new WebSocketHandler(authDAO, gameDAO, connectionManager);
+        javalin = Javalin.create(config -> {
+            config.staticFiles.add("web");
+            config.router.mount(router -> {
+                router.ws("/ws", ws -> {
+                    ws.onMessage(wsHandler::onMessage);
+                    ws.onConnect(wsHandler::onConnect);
+                    ws.onClose(wsHandler::onClose);
+                });
+            });
+            config.jetty.modifyWebSocketServletFactory(factory -> {
+                factory.setIdleTimeout(java.time.Duration.ofMinutes(10));
+            });
+        });
 
         // Clear endpoint
         ClearService clearService = new ClearService(authDAO, gameDAO, userDAO);
@@ -59,15 +74,6 @@ public class Server {
         JoinGameService joinGameService = new JoinGameService(authDAO, gameDAO);
         JoinGameHandler joinGameHandler = new JoinGameHandler(joinGameService);
         javalin.put("/game", joinGameHandler::updateGame);
-
-        // Websocket endpoint
-        ConnectionManager connectionManager = new ConnectionManager();
-        WebSocketHandler wsHandler = new WebSocketHandler(authDAO, gameDAO, connectionManager);
-        javalin.ws("/ws", ws -> {
-           ws.onMessage(wsHandler::onMessage);
-           ws.onConnect(wsHandler::onConnect);
-           ws.onClose(wsHandler::onClose);
-        });
 
     }
 

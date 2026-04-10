@@ -83,7 +83,7 @@ public class BoardDrawer {
                 }
                 else {
                     text = getPieceLetter(piece.getPieceType());
-                    textColor = (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 30 : 31;
+                    textColor = (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 31 : 30;
                 }
 
                 sb.append("\u001b[" + textColor + ";" + background + ";1m " + text + " \u001b[0m");

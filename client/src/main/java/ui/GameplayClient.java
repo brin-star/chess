@@ -61,6 +61,9 @@ public class GameplayClient implements ServerMessageObserver {
             System.out.print("[IN_GAME] >>> ");
             String line = scanner.nextLine();
             String result = eval(line);
+            if (!result.isEmpty()) {
+                System.out.println(result);
+            }
             if (result.equals("leave")) {
                 inGame = false;
             }
