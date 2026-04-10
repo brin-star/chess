@@ -95,8 +95,11 @@ public class PostloginClient {
                 GameData game = new ArrayList<>(lastGamesList).get(gameIndex);
                 int gameID = game.gameID();
 
-                drawBoard(ChessGame.TeamColor.WHITE);
-                return "Now observing game: " + game.gameName();
+                GameplayClient gameplayClient = new GameplayClient(serverFacade, auth, gameID, null);
+                serverFacade.setObserver(gameplayClient);
+                serverFacade.connectToGame(auth, gameID);
+                gameplayClient.run();
+                return "GAMEPLAY_END";
             }
             catch (NumberFormatException e) {
                 return "Game number must be a number.";
@@ -193,15 +196,12 @@ public class PostloginClient {
             ChessGame.TeamColor playerColor = ChessGame.TeamColor.valueOf(colorInput);
 
             serverFacade.joinGame(auth, gameID, playerColor);
+            GameplayClient gameplayClient = new GameplayClient(serverFacade, auth, gameID, playerColor);
 
-            if (playerColor == ChessGame.TeamColor.WHITE) {
-                drawBoard(ChessGame.TeamColor.WHITE);
-            }
-            else {
-                drawBoard(ChessGame.TeamColor.BLACK);
-            }
-
-            return "Game joined successfully!";
+            serverFacade.setObserver(gameplayClient);
+            serverFacade.connectToGame(auth, gameID);
+            gameplayClient.run();
+            return "GAMEPLAY_END";
         }
         catch (NumberFormatException e) {
             return "Game number must be a number.";

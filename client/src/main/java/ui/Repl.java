@@ -53,6 +53,9 @@ public class Repl {
                 isLoggedIn = false;
                 System.out.println("You are now logged out.");
             }
+            else if (result.equals("GAMEPLAY_END")) {
+                System.out.println("You have left the game.");
+            }
             else {
                 System.out.println(result);
             }

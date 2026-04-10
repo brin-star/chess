@@ -123,4 +123,8 @@ public class ServerFacade {
         UserGameCommand cmd = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
         ws.send(new Gson().toJson(cmd));
     }
+
+    public void setObserver(ServerMessageObserver observer) {
+        this.observer = observer;
+    }
 }
