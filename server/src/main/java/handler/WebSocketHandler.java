@@ -98,14 +98,17 @@ public class WebSocketHandler {
                 return;
             }
 
-            if (!bundle.authData.username().equals(bundle.gameData.whiteUsername()) && !bundle.authData.username().equals(bundle.gameData.blackUsername())) {
+            if (!bundle.authData.username().equals(bundle.gameData.whiteUsername())
+                    && !bundle.authData.username().equals(bundle.gameData.blackUsername())) {
                 String errorJson = new Gson().toJson(new ErrorMessage("Error: observers can't make moves"));
                 connectionManager.sendToOne(wsMessageContext.session, errorJson);
                 return;
             }
 
-            if (bundle.authData.username().equals(bundle.gameData.whiteUsername()) && bundle.gameData.game().getTeamTurn() != ChessGame.TeamColor.WHITE
-                    || bundle.authData.username().equals(bundle.gameData.blackUsername()) && bundle.gameData.game().getTeamTurn() != ChessGame.TeamColor.BLACK) {
+            if (bundle.authData.username().equals(bundle.gameData.whiteUsername())
+                    && bundle.gameData.game().getTeamTurn() != ChessGame.TeamColor.WHITE
+                    || bundle.authData.username().equals(bundle.gameData.blackUsername())
+                    && bundle.gameData.game().getTeamTurn() != ChessGame.TeamColor.BLACK) {
                 String errorJson = new Gson().toJson(new ErrorMessage("Error: not " + bundle.authData.username() + "'s turn"));
                 connectionManager.sendToOne(wsMessageContext.session, errorJson);
                 return;
@@ -164,10 +167,16 @@ public class WebSocketHandler {
             }
 
             if (bundle.authData.username().equals(bundle.gameData.whiteUsername())) {
-                gameDAO.updateGameInDB(new GameData(bundle.gameData.gameID(), null, bundle.gameData.blackUsername(), bundle.gameData.gameName(), bundle.gameData.game()));
+                gameDAO.updateGameInDB(
+                        new GameData(bundle.gameData.gameID(), null,
+                                bundle.gameData.blackUsername(), bundle.gameData.gameName(), bundle.gameData.game())
+                );
             }
             else if (bundle.authData.username().equals(bundle.gameData.blackUsername())) {
-                gameDAO.updateGameInDB(new GameData(bundle.gameData.gameID(), bundle.gameData.whiteUsername(), null, bundle.gameData.gameName(), bundle.gameData.game()));
+                gameDAO.updateGameInDB(
+                        new GameData(bundle.gameData.gameID(), bundle.gameData.whiteUsername(), null,
+                                bundle.gameData.gameName(), bundle.gameData.game())
+                );
             }
 
             connectionManager.remove(wsMessageContext.session);
@@ -194,7 +203,8 @@ public class WebSocketHandler {
                 return;
             }
 
-            if (!bundle.authData.username().equals(bundle.gameData.whiteUsername()) && !bundle.authData.username().equals(bundle.gameData.blackUsername())) {
+            if (!bundle.authData.username().equals(bundle.gameData.whiteUsername())
+                    && !bundle.authData.username().equals(bundle.gameData.blackUsername())) {
                 String errorJson = new Gson().toJson(new ErrorMessage("Error: observers can't resign"));
                 connectionManager.sendToOne(wsMessageContext.session, errorJson);
                 return;
@@ -203,7 +213,9 @@ public class WebSocketHandler {
             bundle.gameData.game().setGameOver(true);
             gameDAO.updateGameInDB(bundle.gameData);
 
-            String messageToSend = new Gson().toJson(new NotificationMessage(bundle.authData.username() + " resigned from game: " + bundle.gameData.gameName()));
+            String messageToSend = new Gson().toJson(
+                    new NotificationMessage(bundle.authData.username() + " resigned from game: " + bundle.gameData.gameName())
+            );
             connectionManager.broadcastToAll(bundle.gameData.gameID(), messageToSend);
         }
         catch (DataAccessException e) {

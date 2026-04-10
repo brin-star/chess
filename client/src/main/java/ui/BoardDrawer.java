@@ -102,7 +102,10 @@ public class BoardDrawer {
         return letter;
     }
 
-    private static void assignBackground(Collection<ChessMove> validMoves, ChessPosition position, ChessPosition startPosition, int background, int i, int k) {
+    private static void assignBackground(
+            Collection<ChessMove> validMoves, ChessPosition position,
+            ChessPosition startPosition, int background, int i, int k
+    ) {
         if (validMoves != null) {
             if (startPosition.equals(position)) {
                 background = 43;
