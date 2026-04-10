@@ -11,6 +11,7 @@ import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsMessageContext;
 import model.AuthData;
 import model.GameData;
+import org.eclipse.jetty.websocket.api.Session;
 import server.ConnectionManager;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
@@ -30,6 +31,8 @@ public class WebSocketHandler {
         this.gameDAO = gameDAO;
         this.connectionManager = connectionManager;
     }
+
+    record AuthGameBundle(AuthData authData, GameData gameData) {};
 
     public void onMessage(WsMessageContext wsMessageContext) {
         var base = new Gson().fromJson(wsMessageContext.message(), UserGameCommand.class);
@@ -52,181 +55,175 @@ public class WebSocketHandler {
 
     private void handleConnect(UserGameCommand userGameCommand, WsMessageContext wsMessageContext) {
         try {
-            AuthData authData = authDAO.getAuth(userGameCommand.getAuthToken());
-            GameData gameData = gameDAO.getGame(userGameCommand.getGameID());
-
-            if (authData == null) {
-                String errorJson = new Gson().toJson(new ErrorMessage("Error: unauthorized"));
-                connectionManager.sendToOne(wsMessageContext.session, errorJson);
-                return;
-            }
-
-            if (gameData == null ) {
-                String errorJson = new Gson().toJson(new ErrorMessage("Error: no game found"));
-                connectionManager.sendToOne(wsMessageContext.session, errorJson);
+            AuthGameBundle bundle = validate(userGameCommand, wsMessageContext);
+            if (bundle == null) {
                 return;
             }
 
             connectionManager.add(userGameCommand.getGameID(), wsMessageContext.session);
 
-            String messageToSend = new Gson().toJson(new LoadGameMessage(gameData));
+            String messageToSend = new Gson().toJson(new LoadGameMessage(bundle.gameData));
             connectionManager.sendToOne(wsMessageContext.session, messageToSend);
 
             String notification;
 
-            if (authData.username().equals(gameData.whiteUsername())) {
-                notification = gameData.whiteUsername() + " joined as WHITE";
+            if (bundle.authData.username().equals(bundle.gameData.whiteUsername())) {
+                notification = bundle.gameData.whiteUsername() + " joined as WHITE";
             }
-            else if (authData.username().equals(gameData.blackUsername())) {
-                notification = gameData.blackUsername() + " joined as BLACK";
+            else if (bundle.authData.username().equals(bundle.gameData.blackUsername())) {
+                notification = bundle.gameData.blackUsername() + " joined as BLACK";
             }
             else {
-                notification = authData.username() + " joined as observer";
+                notification = bundle.authData.username() + " joined as observer";
             }
 
             messageToSend = new Gson().toJson(new NotificationMessage(notification));
             connectionManager.broadcastToAllExcept(userGameCommand.getGameID(), wsMessageContext.session, messageToSend);
         }
         catch (Exception e) {
-            String errorJson = new Gson().toJson(new ErrorMessage("Error: " + e.getMessage()));
-            try {
-                connectionManager.sendToOne(wsMessageContext.session, errorJson);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            sendError(wsMessageContext.session, e);
         }
     }
 
     private void handleMakeMove(MakeMoveCommand makeMoveCommand, WsMessageContext wsMessageContext) {
         try {
-            AuthData authData = authDAO.getAuth(makeMoveCommand.getAuthToken());
-            GameData gameData = gameDAO.getGame(makeMoveCommand.getGameID());
-
-            if (authData == null) {
-                String errorJson = new Gson().toJson(new ErrorMessage("Error: unauthorized"));
-                connectionManager.sendToOne(wsMessageContext.session, errorJson);
+            AuthGameBundle bundle = validate(makeMoveCommand, wsMessageContext);
+            if (bundle == null) {
                 return;
             }
 
-            if (gameData == null ) {
-                String errorJson = new Gson().toJson(new ErrorMessage("Error: no game found"));
-                connectionManager.sendToOne(wsMessageContext.session, errorJson);
-                return;
-            }
-
-            if (gameData.game().isGameOver()) {
+            if (bundle.gameData.game().isGameOver()) {
                 String errorJson = new Gson().toJson(new ErrorMessage("Error: game is already over"));
                 connectionManager.sendToOne(wsMessageContext.session, errorJson);
                 return;
             }
 
-            if (!authData.username().equals(gameData.whiteUsername()) && !authData.username().equals(gameData.blackUsername())) {
+            if (!bundle.authData.username().equals(bundle.gameData.whiteUsername()) && !bundle.authData.username().equals(bundle.gameData.blackUsername())) {
                 String errorJson = new Gson().toJson(new ErrorMessage("Error: observers can't make moves"));
                 connectionManager.sendToOne(wsMessageContext.session, errorJson);
                 return;
             }
 
-            if (authData.username().equals(gameData.whiteUsername()) && gameData.game().getTeamTurn() != ChessGame.TeamColor.WHITE
-                    || authData.username().equals(gameData.blackUsername()) && gameData.game().getTeamTurn() != ChessGame.TeamColor.BLACK) {
-                String errorJson = new Gson().toJson(new ErrorMessage("Error: not " + authData.username() + "'s turn"));
+            if (bundle.authData.username().equals(bundle.gameData.whiteUsername()) && bundle.gameData.game().getTeamTurn() != ChessGame.TeamColor.WHITE
+                    || bundle.authData.username().equals(bundle.gameData.blackUsername()) && bundle.gameData.game().getTeamTurn() != ChessGame.TeamColor.BLACK) {
+                String errorJson = new Gson().toJson(new ErrorMessage("Error: not " + bundle.authData.username() + "'s turn"));
                 connectionManager.sendToOne(wsMessageContext.session, errorJson);
                 return;
             }
 
             try {
-                gameData.game().makeMove(makeMoveCommand.getMove());
+                bundle.gameData.game().makeMove(makeMoveCommand.getMove());
             } catch (InvalidMoveException e) {
                 String errorJson = new Gson().toJson(new ErrorMessage("Error: " + e.getMessage()));
                 connectionManager.sendToOne(wsMessageContext.session, errorJson);
                 return;
             }
 
-            String messageToSend = new Gson().toJson(new LoadGameMessage(gameData));
-            connectionManager.broadcastToAll(gameData.gameID(), messageToSend);
+            String messageToSend = new Gson().toJson(new LoadGameMessage(bundle.gameData));
+            connectionManager.broadcastToAll(bundle.gameData.gameID(), messageToSend);
 
-            messageToSend = new Gson().toJson(new NotificationMessage(authData.username() + " moved " + makeMoveCommand.getMove().toString()));
-            connectionManager.broadcastToAllExcept(gameData.gameID(), wsMessageContext.session, messageToSend);
+            messageToSend = new Gson().toJson(new NotificationMessage(bundle.authData.username() + " moved " + makeMoveCommand.getMove().toString()));
+            connectionManager.broadcastToAllExcept(bundle.gameData.gameID(), wsMessageContext.session, messageToSend);
 
             String opponentUsername;
 
-            if (gameData.game().getTeamTurn() == ChessGame.TeamColor.WHITE) {
-                opponentUsername = gameData.whiteUsername();
+            if (bundle.gameData.game().getTeamTurn() == ChessGame.TeamColor.WHITE) {
+                opponentUsername = bundle.gameData.whiteUsername();
             }
             else {
-                opponentUsername = gameData.blackUsername();
+                opponentUsername = bundle.gameData.blackUsername();
             }
 
-            if (gameData.game().isInCheckmate(gameData.game().getTeamTurn())) {
+            if (bundle.gameData.game().isInCheckmate(bundle.gameData.game().getTeamTurn())) {
                 messageToSend = new Gson().toJson(new NotificationMessage(opponentUsername + " is in checkmate"));
-                connectionManager.broadcastToAll(gameData.gameID(), messageToSend);
-                gameData.game().setGameOver(true);
+                connectionManager.broadcastToAll(bundle.gameData.gameID(), messageToSend);
+                bundle.gameData.game().setGameOver(true);
             }
-            else if (gameData.game().isInStalemate(gameData.game().getTeamTurn())) {
+            else if (bundle.gameData.game().isInStalemate(bundle.gameData.game().getTeamTurn())) {
                 messageToSend = new Gson().toJson(new NotificationMessage("Stalemate"));
-                connectionManager.broadcastToAll(gameData.gameID(), messageToSend);
-                gameData.game().setGameOver(true);
+                connectionManager.broadcastToAll(bundle.gameData.gameID(), messageToSend);
+                bundle.gameData.game().setGameOver(true);
             }
-            else if (gameData.game().isInCheck(gameData.game().getTeamTurn())) {
+            else if (bundle.gameData.game().isInCheck(bundle.gameData.game().getTeamTurn())) {
                 messageToSend = new Gson().toJson(new NotificationMessage(opponentUsername + " is in check"));
-                connectionManager.broadcastToAll(gameData.gameID(), messageToSend);
+                connectionManager.broadcastToAll(bundle.gameData.gameID(), messageToSend);
             }
 
-            gameDAO.updateGameInDB(gameData);
+            gameDAO.updateGameInDB(bundle.gameData);
         }
         catch (Exception e) {
-            String errorJson = new Gson().toJson(new ErrorMessage("Error: " + e.getMessage()));
-            try {
-                connectionManager.sendToOne(wsMessageContext.session, errorJson);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            sendError(wsMessageContext.session, e);
         }
     }
 
     private void handleLeave(UserGameCommand userGameCommand, WsMessageContext wsMessageContext) {
         try {
-            AuthData authData = authDAO.getAuth(userGameCommand.getAuthToken());
-            GameData gameData = gameDAO.getGame(userGameCommand.getGameID());
-
-            if (authData == null) {
-                String errorJson = new Gson().toJson(new ErrorMessage("Error: unauthorized"));
-                connectionManager.sendToOne(wsMessageContext.session, errorJson);
+            AuthGameBundle bundle = validate(userGameCommand, wsMessageContext);
+            if (bundle == null) {
                 return;
             }
 
-            if (gameData == null ) {
-                String errorJson = new Gson().toJson(new ErrorMessage("Error: no game found"));
-                connectionManager.sendToOne(wsMessageContext.session, errorJson);
-                return;
+            if (bundle.authData.username().equals(bundle.gameData.whiteUsername())) {
+                gameDAO.updateGameInDB(new GameData(bundle.gameData.gameID(), null, bundle.gameData.blackUsername(), bundle.gameData.gameName(), bundle.gameData.game()));
             }
-
-            if (authData.username().equals(gameData.whiteUsername())) {
-                gameDAO.updateGameInDB(new GameData(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(), gameData.game()));
-            }
-            else if (authData.username().equals(gameData.blackUsername())) {
-                gameDAO.updateGameInDB(new GameData(gameData.gameID(), gameData.whiteUsername(), null, gameData.gameName(), gameData.game()));
+            else if (bundle.authData.username().equals(bundle.gameData.blackUsername())) {
+                gameDAO.updateGameInDB(new GameData(bundle.gameData.gameID(), bundle.gameData.whiteUsername(), null, bundle.gameData.gameName(), bundle.gameData.game()));
             }
 
             connectionManager.remove(wsMessageContext.session);
 
-            String messageToSend = new Gson().toJson(new NotificationMessage(authData.username() + " left the game"));
+            String messageToSend = new Gson().toJson(new NotificationMessage(bundle.authData.username() + " left the game"));
             connectionManager.broadcastToAllExcept(userGameCommand.getGameID(), wsMessageContext.session, messageToSend);
 
         }
         catch (DataAccessException e) {
-            String errorJson = new Gson().toJson(new ErrorMessage("Error: " + e.getMessage()));
-            try {
-                connectionManager.sendToOne(wsMessageContext.session, errorJson);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
+            sendError(wsMessageContext.session, e);
+        }
+    }
+
+    private void handleResign(UserGameCommand userGameCommand, WsMessageContext wsMessageContext) {
+        try {
+            AuthGameBundle bundle = validate(userGameCommand, wsMessageContext);
+            if (bundle == null) {
+                return;
             }
+
+            if (bundle.gameData.game().isGameOver()) {
+                String errorJson = new Gson().toJson(new ErrorMessage("Error: game is already over"));
+                connectionManager.sendToOne(wsMessageContext.session, errorJson);
+                return;
+            }
+
+            if (!bundle.authData.username().equals(bundle.gameData.whiteUsername()) && !bundle.authData.username().equals(bundle.gameData.blackUsername())) {
+                String errorJson = new Gson().toJson(new ErrorMessage("Error: observers can't resign"));
+                connectionManager.sendToOne(wsMessageContext.session, errorJson);
+                return;
+            }
+
+            bundle.gameData.game().setGameOver(true);
+            gameDAO.updateGameInDB(bundle.gameData);
+
+            String messageToSend = new Gson().toJson(new NotificationMessage(bundle.authData.username() + " resigned from game: " + bundle.gameData.gameName()));
+            connectionManager.broadcastToAll(bundle.gameData.gameID(), messageToSend);
+        }
+        catch (DataAccessException e) {
+            sendError(wsMessageContext.session, e);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void handleResign(UserGameCommand userGameCommand, WsMessageContext wsMessageContext) {
+    private void sendError(Session session, Exception message) {
+        String errorJson = new Gson().toJson(new ErrorMessage("Error: " + message));
+        try {
+            connectionManager.sendToOne(session, errorJson);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private AuthGameBundle validate(UserGameCommand userGameCommand, WsMessageContext wsMessageContext) {
         try {
             AuthData authData = authDAO.getAuth(userGameCommand.getAuthToken());
             GameData gameData = gameDAO.getGame(userGameCommand.getGameID());
@@ -234,43 +231,19 @@ public class WebSocketHandler {
             if (authData == null) {
                 String errorJson = new Gson().toJson(new ErrorMessage("Error: unauthorized"));
                 connectionManager.sendToOne(wsMessageContext.session, errorJson);
-                return;
+                return null;
             }
 
-            if (gameData == null ) {
+            if (gameData == null) {
                 String errorJson = new Gson().toJson(new ErrorMessage("Error: no game found"));
                 connectionManager.sendToOne(wsMessageContext.session, errorJson);
-                return;
+                return null;
             }
 
-            if (gameData.game().isGameOver()) {
-                String errorJson = new Gson().toJson(new ErrorMessage("Error: game is already over"));
-                connectionManager.sendToOne(wsMessageContext.session, errorJson);
-                return;
-            }
-
-            if (!authData.username().equals(gameData.whiteUsername()) && !authData.username().equals(gameData.blackUsername())) {
-                String errorJson = new Gson().toJson(new ErrorMessage("Error: observers can't resign"));
-                connectionManager.sendToOne(wsMessageContext.session, errorJson);
-                return;
-            }
-
-            gameData.game().setGameOver(true);
-            gameDAO.updateGameInDB(gameData);
-
-            String messageToSend = new Gson().toJson(new NotificationMessage(authData.username() + " resigned from game: " + gameData.gameName()));
-            connectionManager.broadcastToAll(gameData.gameID(), messageToSend);
+            return new AuthGameBundle(authData, gameData);
+        } catch (Exception e) {
+            sendError(wsMessageContext.session, e);
         }
-        catch (DataAccessException e) {
-            String errorJson = new Gson().toJson(new ErrorMessage("Error: " + e.getMessage()));
-            try {
-                connectionManager.sendToOne(wsMessageContext.session, errorJson);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return null;
     }
 }
