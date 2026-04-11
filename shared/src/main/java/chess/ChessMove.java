@@ -27,6 +27,11 @@ public class ChessMove {
     private ChessPosition end;
     private ChessPiece.PieceType promotionPiece;
 
+    @Override
+    public String toString() {
+        return "from " + start + " to " + end;
+    }
+
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
         this.start = startPosition;

@@ -26,6 +26,12 @@ public class ChessPosition {
     private int row;
     private int col;
 
+    @Override
+    public String toString() {
+        char columnLetter = (char)('a' + col - 1);
+        return "" + columnLetter + row;
+    }
+
     public ChessPosition(int row, int col) {
         this.row = row;
         this.col = col;

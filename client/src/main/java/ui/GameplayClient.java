@@ -102,17 +102,47 @@ public class GameplayClient implements ServerMessageObserver {
     private void promptAndMakeMove() {
         System.out.print("Enter start position (e.g. e2): ");
         String start = scanner.nextLine();
+        if (start.length() != 2) {
+            System.out.println("Please enter exactly two characters (e.g. e2).");
+            return;
+        }
+
         System.out.print("Enter end position (e.g. e4): ");
         String end = scanner.nextLine();
+        if (end.length() != 2) {
+            System.out.println("Please enter exactly two characters (e.g. e2).");
+            return;
+        }
+
 
         char colNum = start.charAt(0);
         char rowLetter = start.charAt(1);
+
+        if (colNum < 'a' || colNum > 'h') {
+            System.out.println("First character must be a letter a-h.");
+            return;
+        }
+        if (rowLetter < '1' || rowLetter > '8') {
+            System.out.println("Invalid input! Second character must be a number 1-8.");
+            return;
+        }
+
         int row = rowLetter - '0';
         int col = colNum - 'a' + 1;
         ChessPosition startPosition = new ChessPosition(row, col);
 
         colNum = end.charAt(0);
         rowLetter = end.charAt(1);
+
+        if (colNum < 'a' || colNum > 'h') {
+            System.out.println("First character must be a letter a-h.");
+            return;
+        }
+        if (rowLetter < '1' || rowLetter > '8') {
+            System.out.println("Invalid input! Second character must be a number 1-8.");
+            return;
+        }
+
         row = rowLetter - '0';
         col = colNum - 'a' + 1;
         ChessPosition endPosition = new ChessPosition(row, col);
@@ -154,9 +184,23 @@ public class GameplayClient implements ServerMessageObserver {
     private void promptAndHighlight() {
         System.out.print("Enter square to highlight (e.g. b3): ");
         String square = scanner.nextLine();
+        if (square.length() != 2) {
+            System.out.println("Please enter exactly two characters (e.g. e2).");
+            return;
+        }
 
         char colNum = square.charAt(0);
         char rowLetter = square.charAt(1);
+
+        if (colNum < 'a' || colNum > 'h') {
+            System.out.println("First character must be a letter a-h.");
+            return;
+        }
+        if (rowLetter < '1' || rowLetter > '8') {
+            System.out.println("Invalid input! Second character must be a number 1-8.");
+            return;
+        }
+
         int row = rowLetter - '0';
         int col = colNum - 'a' + 1;
         ChessPosition position = new ChessPosition(row, col);
