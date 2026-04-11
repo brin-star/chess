@@ -116,10 +116,10 @@ public class BoardDrawer {
             }
             else if (validMoves.stream().anyMatch(move -> move.getEndPosition().equals(position))) {
                 if ((i + k) % 2 != 0) {
-                    background = 46;
+                    background = 104;
                 }
                 else {
-                    background = 104;
+                    background = 46;
                 }
             }
             else {
