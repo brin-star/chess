@@ -47,7 +47,7 @@ public class BoardDrawer {
                 ChessPiece piece = currentGame.getBoard().getPiece(position);
 
                 // Determine background color
-                assignBackground(validMoves, position, startPosition, background, i, k);
+                background = assignBackground(validMoves, position, startPosition, background, i, k);
 
                 // Determine the piece and piece color
                 if (piece == null) {
@@ -102,7 +102,7 @@ public class BoardDrawer {
         return letter;
     }
 
-    private static void assignBackground(
+    private static int assignBackground(
             Collection<ChessMove> validMoves, ChessPosition position,
             ChessPosition startPosition, int background, int i, int k
     ) {
@@ -135,5 +135,7 @@ public class BoardDrawer {
                 background = 105;
             }
         }
+
+        return background;
     }
 }

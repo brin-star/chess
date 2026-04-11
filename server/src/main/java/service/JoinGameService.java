@@ -36,10 +36,12 @@ public class JoinGameService {
             throw new BadRequestException("Game not found");
         }
 
-        if (joinGameRequest.playerColor() == ChessGame.TeamColor.WHITE && game.whiteUsername() != null) {
+        if (joinGameRequest.playerColor() == ChessGame.TeamColor.WHITE && (game.whiteUsername() != null
+                && !game.whiteUsername().equals(userToken.username()))) {
             throw new GameTakenException("Game already taken");
         }
-        if (joinGameRequest.playerColor() == ChessGame.TeamColor.BLACK && game.blackUsername() != null) {
+        if (joinGameRequest.playerColor() == ChessGame.TeamColor.BLACK && (game.blackUsername() != null
+                && !game.blackUsername().equals(userToken.username()))) {
             throw new GameTakenException("Game already taken");
         }
 
