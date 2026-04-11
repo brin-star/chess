@@ -20,6 +20,10 @@ public class BoardDrawer {
         int textColor;
         String text;
 
+        if (playerColor == null) {
+            playerColor = ChessGame.TeamColor.WHITE;
+        }
+
         if (playerColor == ChessGame.TeamColor.WHITE) {
             row = List.of(8, 7, 6, 5, 4, 3, 2, 1);
             column = List.of("a", "b", "c", "d", "e", "f", "g", "h");
